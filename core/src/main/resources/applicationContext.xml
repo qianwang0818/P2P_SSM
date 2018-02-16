@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" 
+	xmlns:jee="http://www.springframework.org/schema/jee"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:mybatis="http://mybatis.org/schema/mybatis-spring"
+	xsi:schemaLocation="
+			http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+			http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+			http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd
+			http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+			http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+			http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring.xsd">
+			
+	<!--0.注解配置 在web环境下,一定要手动配置,spring3.0后会自动配 -->
+	<context:annotation-config />
+	<!--0.开启注解扫描-->
+	<context:component-scan base-package="com.xmg.p2p"/>
+
+	<!--1.导入db.properties-->
+	<context:property-placeholder location="classpath:db.properties"/>
+
+	<!--2.配置数据源-->
+	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+		<property name="driverClassName" value="${db.driver}"/>
+		<property name="url" value="${db.url}"/>
+		<property name="username" value="${db.username}"/>
+		<property name="password" value="${db.password}"/>
+	</bean>
+
+	<!--3.配置sqlSessionFactory-->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource"/>
+		<property name="configLocation" value="classpath:myBatis-config.xml"/>
+		<property name="typeAliasesPackage" value="com.xmg.p2p"/>
+		<property name="mapperLocations" value="classpath:com/xmg/p2p/*/mapper/*Mapper.xml"/>
+	</bean>
+
+	<!--4.配置事务管理器-->
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"/>
+	</bean>
+	<!--5.事务advice-->
+	<tx:advice id="advice" transaction-manager="transactionManager">
+		<tx:attributes>
+			<tx:method name="list*" read-only="true"/>
+			<tx:method name="get*" read-only="true"/>
+			<tx:method name="query*" read-only="true"/>
+			<tx:method name="*"/>
+		</tx:attributes>
+	</tx:advice>
+	<!--6.aop切面事务-->
+	<aop:config>
+		<aop:pointcut expression="execution(* com.xmg.p2p..service.*Service.*(..))" id="pointCut"/>
+		<aop:advisor advice-ref="advice" pointcut-ref="pointCut"/>
+	</aop:config>
+
+	<!--7.扫描并注册mapper接口-->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.xmg.p2p.base.mapper" />
+	</bean>
+
+	<!--自定义标签,与上面三行作用相同-->
+	<!--<mybatis:scan base-package="com.xmg.p2p.base.mapper"/>-->
+
+</beans>
