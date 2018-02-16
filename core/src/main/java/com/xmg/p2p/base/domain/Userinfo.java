@@ -5,11 +5,11 @@ import lombok.Data;
 /**
  * 用户相关信息
  * @Author: Squalo
- * @Date: 2018/2/16 - 16:40
+ * @Date: 2018/2/16 - 16:40    day03_03
  */
 
 @Data
-public class Userinfo {
+public class Userinfo extends BaseDomain {
     private int version;    //版本号
     private long bitState;  //用户状态码
     private String realName;
