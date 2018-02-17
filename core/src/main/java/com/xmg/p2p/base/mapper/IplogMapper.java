@@ -1,6 +1,7 @@
 package com.xmg.p2p.base.mapper;
 
 import com.xmg.p2p.base.domain.Iplog;
+import com.xmg.p2p.base.query.IplogQueryObject;
 import java.util.List;
 
 /***
@@ -10,6 +11,9 @@ public interface IplogMapper {
 
     int insert(Iplog iplog);
 
-    List<Iplog> selectAll();
+    /**高级查询总记录数*/
+    int queryForCount(IplogQueryObject iplogQO);
 
+    /**查询当前页的数据*/
+    List<Iplog> query(IplogQueryObject iplogQO);
 }

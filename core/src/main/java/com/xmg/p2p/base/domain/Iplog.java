@@ -32,4 +32,14 @@ public class Iplog extends BaseDomain{
         this.username = username;
         this.loginTime = loginTime;
     }
+
+    public String getStateDisplay(){
+        if(state == STATE_SUCCESS){
+            return "登录成功";
+        }else if(state == STATE_FAILED){
+            return "登录失败";
+        }else {
+            return "未知的状态";
+        }
+    }
 }

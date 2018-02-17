@@ -25,6 +25,7 @@
       #{unReceivePrincipal,jdbcType=DECIMAL}, #{unReturnAmount,jdbcType=DECIMAL}, #{remainBorrowLimit,jdbcType=DECIMAL}
       )
   </insert>
+
   <update id="updateByPrimaryKey" parameterType="com.xmg.p2p.base.domain.Account" >
     update `account`
     set tradePassword = #{tradePassword,jdbcType=VARCHAR},
@@ -43,6 +44,7 @@
     id, tradePassword, usableAmount, freezedAmount, borrowLimit, version, unReceiveInterest,
     unReceivePrincipal, unReturnAmount, remainBorrowLimit
   </sql>
+
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select <include refid="base_column"/>
     from `account`
@@ -52,4 +54,5 @@
     select <include refid="base_column"/>
     from `account`
   </select>
+
 </mapper>

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.xmg.p2p.base.mapper.IplogMapper" >
+
   <resultMap id="BaseResultMap" type="com.xmg.p2p.base.domain.Iplog" >
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="ip" property="ip" jdbcType="VARCHAR" />
@@ -17,8 +18,39 @@
   <sql id="base_column">
     id, ip, state, username, login_time
   </sql>
-  <select id="selectAll" resultMap="BaseResultMap" >
+
+  <sql id="base_where">
+    <where>
+      <if test="state>-1">
+        and state = #{state}
+      </if>
+      <if test="username!=null">
+        and username = #{username}
+      </if>
+      <if test="beginDate!=null">
+        <![CDATA[
+           and login_time >= #{beginDate}
+        ]]>
+      </if>
+      <if test="endDate!=null">
+        <![CDATA[
+           and login_time <= #{endDate}
+        ]]>
+      </if>
+    </where>
+  </sql>
+
+  <select id="queryForCount" resultType="java.lang.Integer">
+    select count(id)
+    from `iplog`
+    <include refid="base_where"/>
+  </select>
+
+  <select id="query" resultMap="BaseResultMap">
     select <include refid="base_column"/>
     from `iplog`
+    <include refid="base_where"/>
+    order by login_time desc
+    limit #{start},#{pageSize}
   </select>
 </mapper>
