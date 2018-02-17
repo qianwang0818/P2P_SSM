@@ -3,6 +3,7 @@ package com.xmg.p2p.base.controller;
 import com.xmg.p2p.base.query.IplogQueryObject;
 import com.xmg.p2p.base.query.PageResult;
 import com.xmg.p2p.base.service.IIplogService;
+import com.xmg.p2p.base.util.UserContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,6 +29,7 @@ public class IplogController {
     /**个人用户登录记录列表*/
     @RequestMapping("ipLog")
     public ModelAndView ipLogList(@ModelAttribute("qo") IplogQueryObject iplogQO, Map<String,Object> map){
+        iplogQO.setUsername(UserContext.getCurrent().getUsername());
         PageResult pageResult = iplogService.query(iplogQO);
         map.put("pageResult", pageResult);
         return new ModelAndView("iplog_list",map);

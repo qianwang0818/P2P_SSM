@@ -16,13 +16,22 @@
 				})
 				//给查询按钮绑定点击事件
 				$("#query").click(function(){
-				    $("#currentPage").val(1);
+				    //$("#currentPage").val(1);	//隐藏的input标签有默认值为1
 				    $("#searchForm").submit();
 				})
 				//回显筛选状态下拉框的状态
 				$("#state option[value=${qo.state}]").attr("selected","selected");
 
 				//分页
+				$("#pagination").twbsPagination({
+					totalPages: ${pageResult.totalPage},
+					visiblePages: 10,
+					onPageClick: function(event, page){
+                        $("#currentPage").val(page);
+                        $("#searchForm").submit();
+					},
+					startPage: ${pageResult.currentPage}
+				})
 			});
 		</script>
 	</head>
@@ -44,7 +53,7 @@
 				<!-- 功能页面 -->
 				<div class="col-sm-9">
 					<form action="/ipLog.do" name="searchForm" id="searchForm" class="form-inline" method="post">
-						<input type="hidden" id="currentPage" name="currentPage" value="" />
+						<input type="hidden" id="currentPage" name="currentPage" value="1" />
 						<div class="form-group">
 							<label>时间范围</label>
 							<input type="text" class="form-control beginDate" name="beginDate" value='${(qo.beginDate?string("yyyy-MM-dd"))!""}'/>
@@ -83,13 +92,14 @@
 								<#list pageResult.listData as iplog>
 									<tr>
 										<td>${iplog.username}</td>
-										<td>${iplog.loginTime ? string("yyyy-MM-dd HH:mm;ss")}</td>
+										<td>${iplog.loginTime ? string("yyyy-MM-dd HH:mm:ss")}</td>
 								        <td>${iplog.ip}</td>
 								        <td>${iplog.getStateDisplay()}</td>
 									</tr>
 								</#list>
 							</tbody>
 						</table>
+						<#--分页栏-->
 						<div style="text-align: center;">
 							<ul id="pagination" class="pagination"></ul>
 						</div>
