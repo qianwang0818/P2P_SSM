@@ -1,5 +1,7 @@
 package com.xmg.p2p.base.service;
 
+import com.xmg.p2p.base.domain.Logininfo;
+
 /**
  * 登陆相关服务
  * @Author: Squalo
@@ -25,6 +27,7 @@ public interface ILogininfoService {
      * 执行用户登陆,如果登陆成功把Logininfo放到域对象,如果失败抛异常
      * @param username
      * @param password
+     * @param ip
      */
-    void login(String username, String password) throws RuntimeException;
+    Logininfo login(String username, String password, String ip);
 }

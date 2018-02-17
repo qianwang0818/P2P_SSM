@@ -61,8 +61,9 @@
 	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
 		<property name="basePackage" value="com.xmg.p2p.base.mapper" />
 	</bean>
-
 	<!--自定义标签,与上面三行作用相同-->
 	<!--<mybatis:scan base-package="com.xmg.p2p.base.mapper"/>-->
+
+
 
 </beans>

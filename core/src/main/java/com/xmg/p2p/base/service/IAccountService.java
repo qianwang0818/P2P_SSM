@@ -11,4 +11,8 @@ public interface IAccountService {
 
     /**支持乐观锁的更新方法*/
     void update(Account account);
+
+    void add(Account account);
+
+    Account get(Long id);
 }

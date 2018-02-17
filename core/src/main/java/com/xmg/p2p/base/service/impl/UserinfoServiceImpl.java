@@ -24,4 +24,14 @@ public class UserinfoServiceImpl implements IUserinfoService {
             throw new RuntimeException("乐观锁失败,Userinfo:"+userinfo.getId());   //TODO 抛出自定义异常
         }
     }
+
+    @Override
+    public void add(Userinfo userinfo) {
+        userinfoMapper.insert(userinfo);
+    }
+
+    @Override
+    public Userinfo get(Long id) {
+        return userinfoMapper.selectByPrimaryKey(id);
+    }
 }

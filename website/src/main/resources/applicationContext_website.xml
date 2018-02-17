@@ -16,8 +16,8 @@
 	<!--0.开启注解扫描-->
 	<mvc:annotation-driven />
 	<context:component-scan base-package="com.xmg.p2p.base" />
-<!--
 
+<!--
 	&lt;!&ndash; 配置拦截器 &ndash;&gt;
 	<mvc:interceptors>
 		<mvc:interceptor>
@@ -25,27 +25,26 @@
 			<bean class="com.xmg.p2p.base.util.LoginCheckInterceptor" />
 		</mvc:interceptor>
 	</mvc:interceptors>
+-->
 
-	&lt;!&ndash;配置freeMarker的模板路径 &ndash;&gt;
-	<bean
-		class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
-		&lt;!&ndash; 配置freemarker的文件编码 &ndash;&gt;
+	<!--配置freeMarker的模板路径 -->
+	<bean class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
+		<!-- 配置freemarker的文件编码 -->
 		<property name="defaultEncoding" value="UTF-8" />
-		&lt;!&ndash; 配置freemarker寻找模板的路径 &ndash;&gt;
+		<!-- 配置freemarker寻找模板的路径 -->
 		<property name="templateLoaderPath" value="/WEB-INF/views/" />
 	</bean>
-
-	&lt;!&ndash;freemarker视图解析器 &ndash;&gt;
-	<bean id="viewResolver"
-		class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
-		&lt;!&ndash; 是否在model自动把session中的attribute导入进去; &ndash;&gt;
+	<!--freemarker视图解析器 -->
+	<bean id="viewResolver" class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
+		<!-- 是否自动把session中的attribute导入进model,在页面中可以取到session中的内容 -->
 		<property name="exposeSessionAttributes" value="true" />
-		&lt;!&ndash; 配置逻辑视图自动添加的后缀名 &ndash;&gt;
+		<!-- 配置逻辑视图自动添加的后缀名 -->
 		<property name="suffix" value=".ftl" />
-		&lt;!&ndash; 配置视图的输出HTML的contentType &ndash;&gt;
+		<!-- 配置视图的输出HTML的contentType -->
 		<property name="contentType" value="text/html;charset=UTF-8" />
 	</bean>
 
+<!--
 	&lt;!&ndash;处理上传 &ndash;&gt;
 	<bean
 		class="org.springframework.web.multipart.commons.CommonsMultipartResolver"

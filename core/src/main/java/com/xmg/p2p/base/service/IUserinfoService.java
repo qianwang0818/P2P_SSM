@@ -11,4 +11,8 @@ public interface IUserinfoService {
 
     /**支持乐观锁的更新方法*/
     void update(Userinfo userinfo);
+
+    void add(Userinfo userinfo);
+
+    Userinfo get(Long id);
 }

@@ -11,7 +11,7 @@ import lombok.Data;
 @Data
 public class Userinfo extends BaseDomain {
     private int version;    //版本号
-    private long bitState;  //用户状态码
+    private long bitState = 0 ;  //用户状态码
     private String realName;
     private String idNumber;
     private String phoneNumber;
