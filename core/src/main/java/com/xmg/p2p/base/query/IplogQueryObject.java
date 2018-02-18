@@ -15,10 +15,11 @@ import java.util.Date;
 @Data
 public class IplogQueryObject extends QueryObject{
 
+    private String username;    //根据用户名查询登录日志
+    private int state = -1;     //查询登录状态    默认值: -1 表示查询全部(包括1-登录成功/0-登录失败)
+    private int userType = -1;  //查询用户类别    默认值: -1 表示查询全部(包括1-前台/0-后台)
     private Date beginDate;     //查询日志的起始日期
     private Date endDate;       //查询日志的结束日期
-    private int state = -1;     //查询登录状态    默认值: -1 表示查询全部(包括登录成功/登录失败)
-    private String username;    //根据用户名查询登录日志
 
     /**
      * 因为IplogQueryObject里面的参数都是直接让SpringMVC注入进来的

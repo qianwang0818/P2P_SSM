@@ -30,6 +30,7 @@ public class PageResult {
 		return new PageResult(new ArrayList<>(), 0, 1, pageSize);
 	}
 
+	/**避免前端分页条报错: 如果查询到零记录,会调用empty方法,因此currentPage=1. 此时TotalPage=0 就会有逻辑问题*/
 	public int getTotalPage() {
 		return totalPage == 0 ? 1 : totalPage;
 	}
@@ -41,11 +42,9 @@ public class PageResult {
 		this.currentPage = currentPage;
 		this.pageSize = pageSize;
 		// ----------------------------------------
-		this.totalPage = this.totalCount % this.pageSize == 0 ? this.totalCount
-				/ this.pageSize : this.totalCount / this.pageSize + 1;
+		this.totalPage = (this.totalCount % this.pageSize == 0) ? (this.totalCount / this.pageSize) : (this.totalCount / this.pageSize + 1);
 
 		this.prevPage = this.currentPage - 1 >= 1 ? this.currentPage - 1 : 1;
-		this.nextPage = this.currentPage + 1 <= this.totalPage ? this.currentPage + 1
-				: this.totalPage;
+		this.nextPage = this.currentPage + 1 <= this.totalPage ? this.currentPage + 1 : this.totalPage;
 	}
 }

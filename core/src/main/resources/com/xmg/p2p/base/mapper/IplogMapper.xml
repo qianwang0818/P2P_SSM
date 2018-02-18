@@ -22,11 +22,14 @@
 
   <sql id="base_where">
     <where>
+      <if test="username!=null">
+        and username = #{username}
+      </if>
       <if test="state>-1">
         and state = #{state}
       </if>
-      <if test="username!=null">
-        and username = #{username}
+      <if test="userType>-1">
+        and userType = #{userType}
       </if>
       <if test="beginDate!=null">
         <![CDATA[

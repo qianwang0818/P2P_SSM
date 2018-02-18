@@ -37,6 +37,11 @@ public class LoginController {
             jsonResult.setMsg("用户名或密码有误!");
         }
         return jsonResult;
+    }
 
+    /**登录成功,访问后台首页*/
+    @RequestMapping("index")
+    public String index(){
+        return "main";
     }
 }

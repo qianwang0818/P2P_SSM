@@ -72,7 +72,7 @@ public class LogininfoServiceImpl implements ILogininfoService {
     public Logininfo login(String username, String password, String ip, int userType){
         Iplog iplog = new Iplog(ip,username,new Date(),userType);
         Logininfo current = logininfoMapper.login(username,MD5.encode(password),userType);
-        if(current != null){    //登陆成功,把用户放到UserContext
+        if(current != null){    //登陆成功,把用户放到UserContext(实质是HttpSession)
             UserContext.putCurrent(current);
             iplog.setState(Iplog.STATE_SUCCESS);
         }else{                  //登陆失败,抛异常
