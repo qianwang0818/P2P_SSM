@@ -7,16 +7,17 @@
     <result column="ip" property="ip" jdbcType="VARCHAR" />
     <result column="state" property="state" jdbcType="TINYINT" />
     <result column="username" property="username" jdbcType="VARCHAR" />
-    <result column="login_time" property="loginTime" jdbcType="TIMESTAMP" />
+    <result column="loginTime" property="loginTime" jdbcType="TIMESTAMP" />
+    <result column="userType" property="userType" jdbcType="TINYINT" />
   </resultMap>
 
   <insert id="insert" parameterType="com.xmg.p2p.base.domain.Iplog" useGeneratedKeys="true" keyProperty="id" >
-    insert into `iplog` (ip, state, username, login_time)
-    values (#{ip,jdbcType=VARCHAR}, #{state,jdbcType=TINYINT}, #{username,jdbcType=VARCHAR}, #{loginTime,jdbcType=TIMESTAMP})
+    insert into `iplog` (ip, state, username, loginTime, userType)
+    values (#{ip,jdbcType=VARCHAR}, #{state,jdbcType=TINYINT}, #{username,jdbcType=VARCHAR}, #{loginTime,jdbcType=TIMESTAMP}, #{userType})
   </insert>
 
   <sql id="base_column">
-    id, ip, state, username, login_time
+    id, ip, state, username, loginTime, userType
   </sql>
 
   <sql id="base_where">
@@ -29,12 +30,12 @@
       </if>
       <if test="beginDate!=null">
         <![CDATA[
-           and login_time >= #{beginDate}
+           and loginTime >= #{beginDate}
         ]]>
       </if>
       <if test="endDate!=null">
         <![CDATA[
-           and login_time <= #{endDate}
+           and loginTime <= #{endDate}
         ]]>
       </if>
     </where>
@@ -50,7 +51,7 @@
     select <include refid="base_column"/>
     from `iplog`
     <include refid="base_where"/>
-    order by login_time desc
+    order by loginTime desc
     limit #{start},#{pageSize}
   </select>
 </mapper>

@@ -1,5 +1,7 @@
 package com.xmg.p2p.base.util;
 
+import org.springframework.util.StringUtils;
+
 import java.math.BigDecimal;
 
 /**
@@ -22,5 +24,9 @@ public class BidConst {
     /**定义初始授信额度*/
     public static final BigDecimal INIT_BRROW_LIMIT = new BigDecimal("5000.0000");
 
+    /**定义默认管理员的用户名*/
+    public static final String DEFAULT_ADMIN_USERNAME = "admin";
+    /**定义默认管理员的密码*/
+    public static final String DEFAULT_ADMIN_PASSWORD = "123";
 
 }

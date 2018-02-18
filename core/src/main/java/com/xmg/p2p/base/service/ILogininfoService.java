@@ -28,6 +28,13 @@ public interface ILogininfoService {
      * @param username
      * @param password
      * @param ip
+     * @param userType
      */
-    Logininfo login(String username, String password, String ip);
+    Logininfo login(String username, String password, String ip, int userType);
+
+    /**
+     * 初始化超级管理员. 先查询数据库是否有管理员,如果没有就创建并保存
+     */
+    void initAdmin();
+
 }

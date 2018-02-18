@@ -22,5 +22,12 @@ public interface LogininfoMapper {
      */
     int getCountByUsername(String username);
 
-    Logininfo login(@Param("username") String username, @Param("password") String password);
+    Logininfo login(@Param("username") String username, @Param("password") String password, @Param("userType") int userType);
+
+    /**
+     * 根据用户类型(前台或后台)查询用户类型数量
+     * @param userType
+     * @return
+     */
+    int getCountByUserType(int userType);
 }

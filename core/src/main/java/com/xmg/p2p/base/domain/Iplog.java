@@ -21,18 +21,17 @@ public class Iplog extends BaseDomain{
     private int state;
     private String username;
     private Date loginTime;
+    private int userType;   //用户登录类型(1-前台/0-后台)
 
-    /**
-     * @param ip
-     * @param username
-     * @param loginTime
-     */
-    public Iplog(String ip, String username, Date loginTime) {
+    /**有参构造*/
+    public Iplog(String ip, String username, Date loginTime, int userType) {
         this.ip = ip;
         this.username = username;
         this.loginTime = loginTime;
+        this.userType = userType;
     }
 
+    /**在FreeMarker中调用*/
     public String getStateDisplay(){
         if(state == STATE_SUCCESS){
             return "登录成功";
@@ -42,4 +41,16 @@ public class Iplog extends BaseDomain{
             return "未知的状态";
         }
     }
+
+    /**在FreeMarker中调用*/
+    public String getUserTypeDisplay(){
+        if(userType == Logininfo.USER_CLIENT){
+            return "前台用户";
+        }else if(userType == Logininfo.USER_MANAGER){
+            return "后台用户";
+        }else {
+            return "未知的用户";
+        }
+    }
+
 }

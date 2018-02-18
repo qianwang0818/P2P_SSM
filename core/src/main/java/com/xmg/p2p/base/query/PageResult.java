@@ -7,7 +7,7 @@ import com.xmg.p2p.base.constant.CommonConstant;
 import lombok.Getter;
 
 /**
- * 分页查询结果对象
+ * 分页查询结果对象,等价于自定义pageBean
  * day03_10
  */
 

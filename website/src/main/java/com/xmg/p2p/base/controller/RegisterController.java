@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * 用于注册/登陆相关
+ * 用于前台用户的注册/登陆相关
  * @Author: Squalo
  * @Date: 2018/2/15 - 23:26
  */
@@ -23,6 +23,7 @@ public class RegisterController {
     @Autowired
     private ILogininfoService logininfoService;
 
+    /**前台用户注册*/
     @RequestMapping("register")
     @ResponseBody
     public JSONResult register(String username, String password){
@@ -50,9 +51,9 @@ public class RegisterController {
     @ResponseBody
     public JSONResult login(String username, String password, HttpServletRequest request){
         log.info("【RegisterController】收到用户登陆请求,用户名:{},密码:{}",username,password);
-        JSONResult jsonResult = new JSONResult();
         String ip = request.getRemoteAddr();
-        Logininfo logininfo = logininfoService.login(username, password, ip);
+        Logininfo logininfo = logininfoService.login(username, password, ip, Logininfo.USER_CLIENT);
+        JSONResult jsonResult = new JSONResult();
         if(logininfo==null){    //登录失败
             jsonResult.setSuccess(false);
             jsonResult.setMsg("用户名或密码有误!");
