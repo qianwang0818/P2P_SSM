@@ -1,5 +1,6 @@
 package com.xmg.p2p.base.domain;
 
+import com.xmg.p2p.base.util.BitStatesUtils;
 import lombok.Data;
 
 /**
@@ -21,4 +22,11 @@ public class Userinfo extends BaseDomain {
     private SystemDictionaryItem educationBackground;   //学历
     private SystemDictionaryItem houseCondition;   //住房条件
 
+    public boolean isBindPhone() {
+        return BitStatesUtils.hasState(bitState,BitStatesUtils.OP_BIND_PHONE);
+    }
+
+    public boolean isBindEmail() {
+        return BitStatesUtils.hasState(bitState,BitStatesUtils.OP_BIND_EMAIL);
+    }
 }

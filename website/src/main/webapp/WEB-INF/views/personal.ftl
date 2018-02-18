@@ -10,17 +10,58 @@
 
 <script type="text/javascript">
 	$(function() {
-        //邮箱的马上绑定按钮
+
+        //如果手机未认证,给手机的马上认证按钮绑定事件
+		if($("#showBindPhoneModal").size() > 0){		//能够找到马上认证按钮,说明当前是手机未认证状态.
+			//给马上认证按钮绑定事件
+			$("#showBindPhoneModal").click(function(){
+			   $("#bindPhoneModal").modal("show");
+			});
+            //给发送验证码按钮绑定事件
+			$("#sendVerifyCode").click(function(){
+			    var $this = $(this);
+                $this.attr("disabled",true);
+				//1.发送Ajax请求
+				$.ajax({
+					url: "/sendVerifyCode.do",
+					dataType: "json",
+					type: "POST",
+					data: { phoneNumber : ($("#phoneNumber").val()) },
+					success: function(data){
+					    if(data.success){	//2.如果请求成功,禁用按钮,显示倒计时,倒计时结束显示重新发送
+							var sec = 5;
+							var timer = window.setInterval(function(){
+                                if(sec>=1){		//倒计时未结束
+                                    $this.text(sec+"秒后重新发送");
+                                    sec--;
+                                }else{			//倒计时已结束
+                                    window.clearInterval(timer);
+                                    $this.text("重新发送验证码");
+                                    $this.attr("disabled",false);
+                                }
+							} ,1000);
+						}else{				//3.如果请求失败,显示提示信息
+							$.messager.popup(data.msg);
+                            $this.attr("disabled",false);
+						}
+					}
+				})
+
+
+
+
+			})
+
+		}
+
+
+        //保存按钮绑定事件
+
+        //邮箱的马上绑定按钮事件
 
         //给邮箱的保存按钮添加点击事件发送ajax请求
 
-
-        //点击马上绑定
-
-        //给发送验证码按钮添加事件
-
-        //保存按钮绑定事件
-    }
+    })
 </script>
 </head>
 <body>
@@ -106,11 +147,11 @@
 										</div>
 										<div class="el-accoun-auth-right">
 											<h5>手机认证</h5>
-
-											<p>已认证 <a href="#">查看</a></p>
-
-											<p>未认证 <a href="javascript:;" id="showBindPhoneModal">马上绑定</a></p>
-
+											<#if userinfo.isBindPhone()>
+												<p>已认证 <a href="#">查看</a></p>
+											<#else>
+												<p>未认证 <a href="javascript:;" id="showBindPhoneModal">马上绑定</a></p>
+											</#if>
 										</div>
 										<div class="clearfix"></div>
 										<p class="info">可以收到系统操作信息,并增加使用安全性</p>
@@ -157,21 +198,19 @@
 		</div>
 	</div>
 
-
-	<div class="modal fade" id="bindPhoneModal" tabindex="-1" role="dialog"
-		aria-labelledby="exampleModalLabel">
+	<#--绑定手机模态框-->
+	<#if !userinfo.isBindPhone()>
+	<div class="modal fade" id="bindPhoneModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal"
-						aria-label="Close">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 						<span aria-hidden="true">&times;</span>
 					</button>
 					<h4 class="modal-title" id="exampleModalLabel">绑定手机</h4>
 				</div>
 				<div class="modal-body">
-					<form class="form-horizontal" id="bindPhoneForm" method="post"
-						action="/bindPhone.do">
+					<form class="form-horizontal" id="bindPhoneForm" method="post" action="/bindPhone.do">
 						<div class="form-group">
 							<label for="phoneNumber" class="col-sm-2 control-label">手机号:</label>
 							<div class="col-sm-4">
@@ -194,10 +233,10 @@
 			</div>
 		</div>
 	</div>
+	</#if>
 
-
-	<div class="modal fade" id="bindEmailModal" tabindex="-1" role="dialog"
-		aria-labelledby="exampleModalLabel">
+	<#--绑定邮箱模态框-->
+	<div class="modal fade" id="bindEmailModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
