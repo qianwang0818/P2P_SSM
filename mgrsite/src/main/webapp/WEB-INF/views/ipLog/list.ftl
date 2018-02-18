@@ -59,18 +59,19 @@
 				<form id="searchForm" class="form-inline" method="post" action="/ipLog.do">
 					<input type="hidden" id="currentPage" name="currentPage" value="1"/>
 					<div class="form-group">
-					    <label>状态</label>
-					     <select class="form-control" name="state" id="state">
-					    	<option value="-1">全部</option>
-					    	<option value="0">登录失败</option>
-					    	<option value="1">登录成功</option>
-					    </select>
-					</div>
-					<div class="form-group">
 					    <label>登陆时间</label>
 					    <input class="form-control beginDate" type="text" name="beginDate" value='${(qo.beginDate?string("yyyy-MM-dd"))!""}'/>到
 					    <input class="form-control endDate" type="text" name="endDate" value='${(qo.endDate?string("yyyy-MM-dd"))!""}'/>
 					</div>
+					<br/>
+                    <div class="form-group">
+                        <label>状态</label>
+                        <select class="form-control" name="state" id="state">
+                            <option value="-1">全部</option>
+                            <option value="0">登录失败</option>
+                            <option value="1">登录成功</option>
+                        </select>
+                    </div>
 					<div class="form-group">
 					    <label>用户类型</label>
 					     <select class="form-control" name="userType" id="userType">
@@ -81,7 +82,7 @@
 					</div>
 					<div class="form-group">
 						<label>用户名</label>
-						<input class="form-control" type="text" name="username" value='${(qo.username)!""}'/>
+						<input class="form-control" type="text" name="username" value='${(qo.username)!""}' style="width: 100px"/>
 					</div>
 					<div class="form-group">
 						<button id="query" type="button" class="btn btn-success"><i class="icon-search"></i> 查询</button>

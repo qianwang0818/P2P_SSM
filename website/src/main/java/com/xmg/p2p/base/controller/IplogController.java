@@ -1,5 +1,6 @@
 package com.xmg.p2p.base.controller;
 
+import com.xmg.p2p.base.annotation.RequireLogin;
 import com.xmg.p2p.base.query.IplogQueryObject;
 import com.xmg.p2p.base.query.PageResult;
 import com.xmg.p2p.base.service.IIplogService;
@@ -27,6 +28,7 @@ public class IplogController {
     private IIplogService iplogService;
 
     /**个人用户登录记录列表*/
+    @RequireLogin
     @RequestMapping("ipLog")
     public ModelAndView ipLogList(@ModelAttribute("qo") IplogQueryObject iplogQO, Map<String,Object> map){
         iplogQO.setUsername(UserContext.getCurrent().getUsername());

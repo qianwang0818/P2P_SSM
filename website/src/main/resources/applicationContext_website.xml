@@ -18,15 +18,13 @@
 	<mvc:annotation-driven />
 	<context:component-scan base-package="com.xmg.p2p.base" />
 
-<!--
-	&lt;!&ndash; 配置拦截器 &ndash;&gt;
+	<!-- 配置拦截器 -->
 	<mvc:interceptors>
 		<mvc:interceptor>
 			<mvc:mapping path="/*" />
-			<bean class="com.xmg.p2p.base.util.LoginCheckInterceptor" />
+			<bean class="com.xmg.p2p.base.interceptor.LoginCheckInterceptor" />
 		</mvc:interceptor>
 	</mvc:interceptors>
--->
 
 	<!--配置freeMarker的模板路径 -->
 	<bean class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">

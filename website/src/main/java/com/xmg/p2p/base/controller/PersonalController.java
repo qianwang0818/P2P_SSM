@@ -3,6 +3,7 @@ package com.xmg.p2p.base.controller;
 import com.xmg.p2p.base.domain.Logininfo;
 import com.xmg.p2p.base.service.IAccountService;
 import com.xmg.p2p.base.service.IUserinfoService;
+import com.xmg.p2p.base.annotation.RequireLogin;
 import com.xmg.p2p.base.util.UserContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -23,6 +24,7 @@ public class PersonalController {
     @Autowired
     private IAccountService accountService;
 
+    @RequireLogin
     @RequestMapping("personal")
     public String personalCenter(Model model){
         Logininfo current = UserContext.getCurrent();       //从Session中取出当前登录的Logininfo
