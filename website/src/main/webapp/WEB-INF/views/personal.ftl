@@ -13,11 +13,13 @@
 
         //如果手机未认证,给手机的马上认证按钮绑定事件
 		if($("#showBindPhoneModal").size() > 0){		//能够找到马上认证按钮,说明当前是手机未认证状态.
-			//给马上认证按钮绑定事件
+
+			//给个人中心的马上认证按钮绑定事件
 			$("#showBindPhoneModal").click(function(){
 			   $("#bindPhoneModal").modal("show");
 			});
-            //给发送验证码按钮绑定事件
+
+            //给手机认证模态框的发送验证码按钮绑定事件
 			$("#sendVerifyCode").click(function(){
 			    var $this = $(this);
                 $this.attr("disabled",true);
@@ -46,16 +48,24 @@
 						}
 					}
 				})
-
-
-
-
 			})
 
+			//把手机认证模态框的Form变成一个AjaxForm
+			$("#bindPhoneForm").ajaxForm(function(data){
+			    if(data.success){		//绑定成功
+					window.location.reload();
+				}else{
+			        $.messager.popup(data.msg);
+				}
+			});
+
+            //给手机认证模态框的保存按钮绑定事件
+            $("#bindPhone").click(function(){
+                $("#bindPhoneForm").submit();
+			})
 		}
 
 
-        //保存按钮绑定事件
 
         //邮箱的马上绑定按钮事件
 

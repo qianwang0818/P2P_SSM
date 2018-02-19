@@ -29,4 +29,9 @@ public class Userinfo extends BaseDomain {
     public boolean isBindEmail() {
         return BitStatesUtils.hasState(bitState,BitStatesUtils.OP_BIND_EMAIL);
     }
+
+    public void addState(long state){
+        this.bitState = BitStatesUtils.addState(this.bitState, state);
+    }
+
 }

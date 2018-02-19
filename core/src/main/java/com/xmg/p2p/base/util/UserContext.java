@@ -1,6 +1,7 @@
 package com.xmg.p2p.base.util;
 
 import com.xmg.p2p.base.domain.Logininfo;
+import com.xmg.p2p.base.vo.VerifyCodeVO;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -31,13 +32,20 @@ public class UserContext {
 		return (Logininfo) getSession().getAttribute(USER_IN_SESSION);
 	}
 
-	/*public static void putVerifyCode(VerifyCodeVO vc) {
-		getSession().setAttribute(VERIFYCODE_IN_SESSION, vc);
+	/**
+	 * 将验证码VO放入Session
+	 * day04_07
+	 */
+	public static void putVerifyCode(VerifyCodeVO verifyCodeVO) {
+		getSession().setAttribute(VERIFYCODE_IN_SESSION, verifyCodeVO);
 	}
 
-	*//**得到当前的短信验证码*//*
+	/**
+	 * 从Session得到当前的短信验证码VerifyCodeVO对象
+	 * day04_07
+	 */
 	public static VerifyCodeVO getCurrentVerifyCode() {
 		return (VerifyCodeVO) getSession().getAttribute(VERIFYCODE_IN_SESSION);
-	}*/
+	}
 
 }

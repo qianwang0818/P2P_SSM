@@ -29,4 +29,9 @@ public class BidConst {
     /**定义默认管理员的密码*/
     public static final String DEFAULT_ADMIN_PASSWORD = "123";
 
+    /**手机验证码的重新发送间隔时间*/
+    public static final int VERIFYCODE_SENDGAP_SECOND = 90;
+    /**手机验证码的有效时间*/
+    public static final int VERIFYCODE_VALIDATE_SECOND = 300;
+
 }

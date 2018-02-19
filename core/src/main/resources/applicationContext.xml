@@ -20,7 +20,7 @@
 	<context:component-scan base-package="com.xmg.p2p"/>
 
 	<!--1.导入db.properties-->
-	<context:property-placeholder location="classpath:db.properties"/>
+	<context:property-placeholder location="classpath:db.properties,classpath:redis.properties"/>
 
 	<!--2.配置数据源-->
 	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
@@ -64,6 +64,31 @@
 	<!--自定义标签,与上面三行作用相同-->
 	<!--<mybatis:scan base-package="com.xmg.p2p.base.mapper"/>-->
 
+
+	<!--jedis连接池配置-->
+	<bean id="poolConfig" class="redis.clients.jedis.JedisPoolConfig">
+		<property name="maxIdle" value="${redis.maxIdle}"/>	<!--最大空闲时间-->
+		<property name="maxWaitMillis" value="${redis.maxWaitMillis}"/>	<!--最大等待时间-->
+		<property name="testOnBorrow" value="${redis.testOnBorrow}"/>
+	</bean>
+
+	<!--jedis连接工厂-->
+	<bean id="redisConnectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">
+		<property name="hostName" value="${redis.hostName}"/>
+		<property name="port" value="${redis.port}"/>
+		<property name="poolConfig" ref="poolConfig"/>
+	</bean>
+
+	<!-- spring data提供的redis模板 -->
+	<bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate">
+		<property name="connectionFactory" ref="redisConnectionFactory"/>
+		<property name="keySerializer">
+			<bean class="org.springframework.data.redis.serializer.StringRedisSerializer"/>
+		</property>
+		<property name="valueSerializer">
+			<bean class="org.springframework.data.redis.serializer.StringRedisSerializer"/>
+		</property>
+	</bean>
 
 
 </beans>
