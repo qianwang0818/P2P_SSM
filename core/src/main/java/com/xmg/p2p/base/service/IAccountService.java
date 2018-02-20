@@ -15,4 +15,7 @@ public interface IAccountService {
     void add(Account account);
 
     Account get(Long id);
+
+    /**得到Session中的Logininfo对应的Account用户账户对象*/
+    Account getCurrent();
 }

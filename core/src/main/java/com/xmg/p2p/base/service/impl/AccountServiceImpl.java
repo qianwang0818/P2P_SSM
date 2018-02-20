@@ -3,6 +3,7 @@ package com.xmg.p2p.base.service.impl;
 import com.xmg.p2p.base.domain.Account;
 import com.xmg.p2p.base.mapper.AccountMapper;
 import com.xmg.p2p.base.service.IAccountService;
+import com.xmg.p2p.base.util.UserContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,5 +34,10 @@ public class AccountServiceImpl implements IAccountService {
     @Override
     public Account get(Long id) {
         return accountMapper.selectByPrimaryKey(id);
+    }
+
+    @Override
+    public Account getCurrent() {
+        return this.get(UserContext.getCurrent().getId());
     }
 }

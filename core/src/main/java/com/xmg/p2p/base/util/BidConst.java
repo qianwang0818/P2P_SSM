@@ -36,4 +36,7 @@ public class BidConst {
     /**邮箱认证邮件的有效时间*/
     public static final int VERIFYEMAIL_VALIDATE_DAY = 5;
 
+    /**基本风控认证分数,可借款的及格分*/
+    public static final int BASE_AUTH_SCORE = 30;
+
 }

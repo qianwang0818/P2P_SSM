@@ -17,11 +17,17 @@ public class Userinfo extends BaseDomain {
     private String idNumber;
     private String phoneNumber;
     private String email;
+    private int score = 0;  //风控累计分数
+
     private SystemDictionaryItem incomeGrade;   //收入
     private SystemDictionaryItem marriage;   //婚姻状况
     private SystemDictionaryItem kidCount;   //子女情况
     private SystemDictionaryItem educationBackground;   //学历
     private SystemDictionaryItem houseCondition;   //住房条件
+
+    public void addState(long state){
+        this.bitState = BitStatesUtils.addState(this.bitState, state);
+    }
 
     public boolean isBindPhone() {
         return BitStatesUtils.hasState(bitState,BitStatesUtils.OP_BIND_PHONE);
@@ -31,8 +37,16 @@ public class Userinfo extends BaseDomain {
         return BitStatesUtils.hasState(bitState,BitStatesUtils.OP_BIND_EMAIL);
     }
 
-    public void addState(long state){
-        this.bitState = BitStatesUtils.addState(this.bitState, state);
+    public boolean isBasicInfo(){
+        return BitStatesUtils.hasState(bitState,BitStatesUtils.OP_BASIC_INFO);
+    }
+
+    public boolean isRealAuth(){
+        return BitStatesUtils.hasState(bitState,BitStatesUtils.OP_REAL_AUTH);
+    }
+
+    public boolean isVideoAuth() {
+        return BitStatesUtils.hasState(bitState,BitStatesUtils.OP_REAL_AUTH);
     }
 
 }
