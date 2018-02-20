@@ -32,4 +32,23 @@
     from `systemdictionary`
   </select>
 
+  <sql id="base_where">
+    <where>
+      <if test="keyword!=null">
+        and ( sn like concat('%',#{keyword},'%') or title like concat('%',#{keyword},'%') )
+      </if>
+    </where>
+  </sql>
+  <select id="queryForCount" resultType="java.lang.Integer">
+    select count(id)
+    from `systemdictionary`
+    <include refid="base_where"/>
+  </select>
+  <select id="query" resultMap="BaseResultMap">
+    select <include refid="base_column"/>
+    from `systemdictionary`
+    <include refid="base_where"/>
+    limit #{start},#{pageSize}
+  </select>
+
 </mapper>

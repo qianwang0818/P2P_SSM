@@ -35,8 +35,7 @@ public class PageResult {
 		return totalPage == 0 ? 1 : totalPage;
 	}
 
-	public PageResult(List listData, Integer totalCount, Integer currentPage,
-			Integer pageSize) {
+	public PageResult(List listData, Integer totalCount, Integer currentPage, Integer pageSize) {
 		this.listData = listData;
 		this.totalCount = totalCount;
 		this.currentPage = currentPage;
