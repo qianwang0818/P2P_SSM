@@ -72,6 +72,12 @@
                 <artifactId>spring-data-redis</artifactId>
                 <version>1.8.9.RELEASE</version>
             </dependency>
+            <!--javax.mail-->
+            <dependency>
+                <groupId>javax.mail</groupId>
+                <artifactId>mail</artifactId>
+                <version>1.4.1</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

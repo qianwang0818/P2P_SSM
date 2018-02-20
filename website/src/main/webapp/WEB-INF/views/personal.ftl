@@ -16,7 +16,8 @@
 
 			//给个人中心的马上认证按钮绑定事件
 			$("#showBindPhoneModal").click(function(){
-			   $("#bindPhoneModal").modal("show");
+				//$("#bindPhoneForm")[0].reset();	//重置表单内容
+				$("#bindPhoneModal").modal("show");
 			});
 
             //给手机认证模态框的发送验证码按钮绑定事件
@@ -66,9 +67,31 @@
 		}
 
 
-        //邮箱的马上绑定按钮事件
+		//如果邮箱未认证,给邮箱的马上认证按钮绑定事件
+        if($("#showBindEmailModal").size() > 0) {		//能够找到马上认证按钮,说明当前是邮箱未认证状态.
 
-        //给邮箱的保存按钮添加点击事件发送ajax请求
+            //邮箱的马上认证按钮绑定点击事件
+            $("#showBindEmailModal").click(function(){
+                $("#bindEmailForm")[0].reset();
+                $("#bindEmailModal").modal("show");
+            });
+
+            //把邮箱认证模态框的Form变成一个AjaxForm
+			$("#bindEmailForm").ajaxForm(function(data){
+                if(data.success){		//发送邮件成功
+                    $.messager.alert(data.msg);
+                    $("#bindEmailModal").modal("close");
+                }else{
+                    $.messager.popup(data.msg);
+                }
+			})
+
+            //给邮箱模态框的保存按钮添加点击事件发送ajax请求
+			$("#bindEmail").click(function(){
+                $("#bindEmailForm").submit();
+			})
+
+        }
 
     })
 </script>
@@ -173,12 +196,11 @@
 										</div>
 										<div class="el-accoun-auth-right">
 											<h5>邮箱认证</h5>
-
+											<#if userinfo.isBindEmail()>
 											<p>已绑定 <a href="#">修改</a></p>
-
+											<#else>
 											<p>未绑定 <a href="javascript:;" id="showBindEmailModal">马上绑定</a></p>
-
-											
+											</#if>
 										</div>
 										<div class="clearfix"></div>
 										<p class="info">您可以设置邮箱来接收重要信息</p>
@@ -245,6 +267,7 @@
 	</#if>
 
 	<#--绑定邮箱模态框-->
+	<#if !userinfo.isBindEmail()>
 	<div class="modal fade" id="bindEmailModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
@@ -266,11 +289,12 @@
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-					<button type="button" class="btn btn-primary" id="bindEmail">保存</button>
+					<button type="button" class="btn btn-primary" id="bindEmail">发送认证邮件</button>
 				</div>
 			</div>
 		</div>
 	</div>
+	</#if>
 
 	<#include "common/footer-tpl.ftl" />
 </body>

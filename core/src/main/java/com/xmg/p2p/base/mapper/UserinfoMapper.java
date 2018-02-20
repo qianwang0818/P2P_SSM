@@ -18,4 +18,6 @@ public interface UserinfoMapper {
 
     Userinfo selectByPhoneNumber(String phoneNumber);
 
+    Userinfo selectByEmail(String email);
+
 }

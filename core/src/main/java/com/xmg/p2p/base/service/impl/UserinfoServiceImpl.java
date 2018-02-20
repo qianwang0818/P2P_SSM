@@ -3,13 +3,19 @@ package com.xmg.p2p.base.service.impl;
 import com.xmg.p2p.base.domain.Userinfo;
 import com.xmg.p2p.base.mapper.UserinfoMapper;
 import com.xmg.p2p.base.service.IUserinfoService;
-import com.xmg.p2p.base.service.IVerifyCodeService;
+import com.xmg.p2p.base.service.IVerifyService;
+import com.xmg.p2p.base.util.BidConst;
 import com.xmg.p2p.base.util.BitStatesUtils;
+import com.xmg.p2p.base.util.RedisUtils;
 import com.xmg.p2p.base.util.UserContext;
 import com.xmg.p2p.base.vo.VerifyCodeVO;
+import com.xmg.p2p.base.vo.VerifyEmailVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import java.util.UUID;
 
 /**
  * 用户相关信息服务
@@ -24,7 +30,7 @@ public class UserinfoServiceImpl implements IUserinfoService {
     private UserinfoMapper userinfoMapper;
 
     @Autowired
-    private IVerifyCodeService verifyCodeService;
+    private IVerifyService verifyService;
 
     @Override
     public void update(Userinfo userinfo) {
@@ -44,31 +50,34 @@ public class UserinfoServiceImpl implements IUserinfoService {
         return userinfoMapper.selectByPrimaryKey(id);
     }
 
+    /**得到当前Session中的Logininfo对应的Userinfo*/
+    @Override
+    public Userinfo getCurrent() {
+        return this.get(UserContext.getCurrent().getId());
+    }
+
+
     /**用户手机认证,其中调用IVerifyCodeService校验Redis验证码业务*/
     @Override
     public void bindPhone(VerifyCodeVO verifyCodeVO) throws RuntimeException {
         //先判断用户是否已经绑定了手机,如果已经绑定了手机,抛出异常
-        Userinfo userinfo = this.get(UserContext.getCurrent().getId());
+        Userinfo userinfo = this.getCurrent();
         if(userinfo!=null && userinfo.isBindPhone()){      //如果用户已经绑定了手机
             throw new RuntimeException("您已绑定手机,请勿重复绑定");       //TODO 抛出自定义异常
         }
 
         //调用IVerifyCodeService业务,校验比对Redis.
-        verifyCodeService.verifyCode(verifyCodeVO); //期间如果验证失败会有异常抛出,后面就不会继续执行
+        verifyService.verifyCode(verifyCodeVO); //期间如果验证失败会有异常抛出,后面就不会继续执行
 
         //如果验证码正确,执行认证手机逻辑
         log.info("【UserinfoServiceImpl:bindPhone】校验验证码成功,IVerifyCodeService的校验验证码方法没有抛出异常");
         userinfo.addState(BitStatesUtils.OP_BIND_PHONE);
         userinfo.setPhoneNumber(verifyCodeVO.getPhoneNumber());
         this.update(userinfo);
-        log.info("【UserinfoServiceImpl:bindPhone】Userinfo更新成功,乐观锁未抛出异常");
+        log.info("【UserinfoServiceImpl:bindPhone】绑定成功! Userinfo更新成功,乐观锁未抛出异常");
     }
 
-    /**
-     * 查看一个手机号是否已经用于认证,如果已经用于认证返回true.没有认证过返回false;
-     * @param phoneNumber
-     * @return
-     */
+    /** 查看一个手机号是否已经用于认证,如果已经用于认证返回true.没有认证过返回false*/
     @Override
     public boolean isPhoneNumberBound(String phoneNumber) {
         Userinfo userinfo = userinfoMapper.selectByPhoneNumber(phoneNumber);
@@ -77,6 +86,40 @@ public class UserinfoServiceImpl implements IUserinfoService {
         }else{
             return false;
         }
+    }
+
+    /** 查看一个邮箱是否已经用于认证,如果已经用于认证返回true.没有认证过返回false*/
+    @Override
+    public boolean isEmailBound(String email) {
+        //判断这个邮箱是否已经被绑定了,如果有就抛异常
+        Userinfo userinfo = userinfoMapper.selectByEmail(email);
+        if(userinfo!=null){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    @Override
+    public void bindEmail(String key) throws RuntimeException {
+
+        //调用IVerifyService去Redis做验证
+        VerifyEmailVO verifyEmailVO = verifyService.verifyEmail(key);   //如果Redis找不到会抛出异常
+
+        //能到这里说明验证通过,没有抛异常,verifyEmailVO一定不为null.
+
+        //先判断用户是不是没有绑定邮箱,如果已经绑定就抛异常
+        Userinfo userinfo = this.get(verifyEmailVO.getUserinfoId());
+        if(userinfo.isBindEmail()){
+            throw new RuntimeException("该账号已绑定邮箱,请勿重复操作");
+        }
+
+        //执行绑定邮箱操作: 修改用户bitState,给email字段填值
+        userinfo.addState(BitStatesUtils.OP_BIND_EMAIL);
+        userinfo.setEmail(verifyEmailVO.getEmail());
+        this.update(userinfo);
+        log.info("【UserinfoServiceImpl:bindEmail】绑定成功! id:{},email:{}",verifyEmailVO.getUserinfoId(),verifyEmailVO.getEmail());
+
     }
 
 }

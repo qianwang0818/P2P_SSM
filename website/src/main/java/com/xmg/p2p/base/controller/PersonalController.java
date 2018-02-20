@@ -4,7 +4,7 @@ import com.xmg.p2p.base.domain.Logininfo;
 import com.xmg.p2p.base.service.IAccountService;
 import com.xmg.p2p.base.service.IUserinfoService;
 import com.xmg.p2p.base.annotation.RequireLogin;
-import com.xmg.p2p.base.service.IVerifyCodeService;
+import com.xmg.p2p.base.util.BidConst;
 import com.xmg.p2p.base.util.JSONResult;
 import com.xmg.p2p.base.util.UserContext;
 import com.xmg.p2p.base.vo.VerifyCodeVO;
@@ -30,6 +30,7 @@ public class PersonalController {
     @Autowired
     private IAccountService accountService;
 
+    /**跳转到个人中心*/
     @RequireLogin
     @RequestMapping("personal")
     public String personalCenter(Model model){
@@ -40,6 +41,7 @@ public class PersonalController {
         return "personal";
     }
 
+    /**手机认证模态框的保存按钮,提交手机号和验证码过来做验证*/
     @RequireLogin
     @RequestMapping("bindPhone")
     @ResponseBody
@@ -54,4 +56,19 @@ public class PersonalController {
         }
         return jsonResult;
     }
+
+    /**点击认证邮件的链接,完成邮箱绑定*/
+    @RequestMapping("bindEmail")
+    public String bindEmail(String key, Model model){
+        try {
+            userinfoService.bindEmail(key);
+            model.addAttribute("success",true);
+        } catch (RuntimeException e) {
+            log.error(e.getMessage());
+            model.addAttribute("success",false);
+            model.addAttribute("msg",e.getMessage());
+        }
+        return "checkmail_result";
+    }
+
 }

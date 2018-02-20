@@ -1,6 +1,7 @@
 package com.xmg.p2p.base.util;
 
 import com.xmg.p2p.base.vo.VerifyCodeVO;
+import com.xmg.p2p.base.vo.VerifyEmailVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -28,6 +29,8 @@ public class RedisUtils {
     private static final String REDIS_VERIFYCODE_PREFIX = "verifyCode_";
     private static final String REDIS_SENTTIMES_PREFIX = "sentTimes_";
 
+    private static final String REDIS_VERIFYEMAIL_PREFIX = "verifyEmail_";
+
     /**得到当前手机号在24h内的发送信息数量*/
     public static int getSentTimes(String phoneNumber){
         String sentTimes = redisTemplate.opsForValue().get(REDIS_SENTTIMES_PREFIX + phoneNumber);
@@ -39,7 +42,7 @@ public class RedisUtils {
     }
 
     /**从Redis得到当前的手机短信验证码VerifyCodeVO对象*/
-    public static VerifyCodeVO getCurrentVerifyCode(String phoneNumber) {
+    public static VerifyCodeVO getVerifyCode(String phoneNumber) {
         String verifyCodeAndLastSendTime = redisTemplate.opsForValue().get(REDIS_VERIFYCODE_PREFIX+phoneNumber);
         if(verifyCodeAndLastSendTime==null){                //如果之前的验证码已经过五分钟失效或未曾发过验证码.
             return null;
@@ -76,4 +79,22 @@ public class RedisUtils {
         redisTemplate.opsForValue().set(REDIS_VERIFYCODE_PREFIX+phoneNumber,"#", 1, TimeUnit.NANOSECONDS);
     }
 
+    /**将认证邮箱K-V放入Redis*/
+    public static void putVerifyEmail(VerifyEmailVO vo){
+        //往Redis里面存一对K-V:'前缀+密钥'-'userinfoId # email'   有效时间五天
+        redisTemplate.opsForValue().set(REDIS_VERIFYEMAIL_PREFIX+vo.getKey(), vo.getUserinfoId()+"#"+vo.getEmail(), BidConst.VERIFYEMAIL_VALIDATE_DAY, TimeUnit.DAYS);
+    }
+
+    /**从Redis中取出认证邮箱VO对象*/
+    public static VerifyEmailVO getVerifyEmail(String key){
+        String userinfoIdAndEmail = redisTemplate.opsForValue().get(REDIS_VERIFYEMAIL_PREFIX + key);
+        if(userinfoIdAndEmail != null){
+            String[] split = userinfoIdAndEmail.split("#");
+            if(split.length>=2){
+                Long userinfoId = Long.parseLong(split[0]);
+                return new VerifyEmailVO(key, userinfoId, split[1]);
+            }
+        }
+        return null;
+    }
 }

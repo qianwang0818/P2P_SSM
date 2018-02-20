@@ -17,8 +17,16 @@ public interface IUserinfoService {
 
     Userinfo get(Long id);
 
+    /**得到当前Session中的Logininfo对应的Userinfo*/
+    Userinfo getCurrent();
+
     /**用户手机认证,其中包括校验Redis验证码逻辑*/
-    void bindPhone(VerifyCodeVO verifyCodeVO);
+    void bindPhone(VerifyCodeVO verifyCodeVO) throws RuntimeException;
 
     boolean isPhoneNumberBound(String phoneNumber);
+
+    boolean isEmailBound(String email);
+
+    /**点击认证邮件链接,执行邮箱认证*/
+    void bindEmail(String key) throws RuntimeException;
 }

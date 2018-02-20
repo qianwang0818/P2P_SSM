@@ -33,5 +33,7 @@ public class BidConst {
     public static final int VERIFYCODE_SENDGAP_SECOND = 90;
     /**手机验证码的有效时间*/
     public static final int VERIFYCODE_VALIDATE_SECOND = 300;
+    /**邮箱认证邮件的有效时间*/
+    public static final int VERIFYEMAIL_VALIDATE_DAY = 5;
 
 }
