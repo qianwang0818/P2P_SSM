@@ -19,4 +19,6 @@ public interface IUserinfoService {
 
     /**用户手机认证,其中包括校验Redis验证码逻辑*/
     void bindPhone(VerifyCodeVO verifyCodeVO);
+
+    boolean isPhoneNumberBound(String phoneNumber);
 }

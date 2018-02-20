@@ -70,6 +70,10 @@ public class RedisUtils {
         redisTemplate.opsForValue().set(REDIS_SENTTIMES_PREFIX+phoneNumber, sentTimes+"", 1, TimeUnit.DAYS);
     }
 
-
+    /**手机号认证成功,把Redis中的验证码失效(有效时间置为零)*/
+    public static void invalidateVerifyCode(String phoneNumber){
+        //往Redis里面存一对K-V: '手机号'-'验证码#上次发送时间'   有效时间为一纳秒(写零会报:ERR invalid expire time in SETEX)
+        redisTemplate.opsForValue().set(REDIS_VERIFYCODE_PREFIX+phoneNumber,"#", 1, TimeUnit.NANOSECONDS);
+    }
 
 }

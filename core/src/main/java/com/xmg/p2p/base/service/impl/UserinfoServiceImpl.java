@@ -64,4 +64,19 @@ public class UserinfoServiceImpl implements IUserinfoService {
         log.info("【UserinfoServiceImpl:bindPhone】Userinfo更新成功,乐观锁未抛出异常");
     }
 
+    /**
+     * 查看一个手机号是否已经用于认证,如果已经用于认证返回true.没有认证过返回false;
+     * @param phoneNumber
+     * @return
+     */
+    @Override
+    public boolean isPhoneNumberBound(String phoneNumber) {
+        Userinfo userinfo = userinfoMapper.selectByPhoneNumber(phoneNumber);
+        if(userinfo!=null){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
 }

@@ -15,4 +15,7 @@ public interface UserinfoMapper {
     List<Userinfo> selectAll();
 
     int updateByPrimaryKey(Userinfo record);
+
+    Userinfo selectByPhoneNumber(String phoneNumber);
+
 }

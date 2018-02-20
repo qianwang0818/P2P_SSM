@@ -1,5 +1,6 @@
 package com.xmg.p2p.base.service.impl;
 
+import com.xmg.p2p.base.service.IUserinfoService;
 import com.xmg.p2p.base.service.IVerifyCodeService;
 import com.xmg.p2p.base.util.BidConst;
 import com.xmg.p2p.base.util.DateUtil;
@@ -27,8 +28,16 @@ public class VerifyCodeServiceImpl implements IVerifyCodeService{
     @Autowired
     private RedisTemplate<String,String> redisTemplate;
 
+    @Autowired
+    private IUserinfoService userinfoService;
+
     @Override
     public void sendVerifyCode(String phoneNumber) throws RuntimeException {
+        //判断这个手机号是否已经被认证过
+        if(userinfoService.isPhoneNumberBound(phoneNumber)){    //返回true说明已经认证过了
+            throw new RuntimeException("该手机号已绑定了账户,请先解除绑定.");
+        }
+
         //判断24h内短信配额5条是否已用完
         if( RedisUtils.getSentTimes(phoneNumber) >= 5){
             throw new RuntimeException("同一手机号24小时内只能接收5条短信,请明天再试");
@@ -74,6 +83,7 @@ public class VerifyCodeServiceImpl implements IVerifyCodeService{
         if( ! redisVO.getVerifyCode().equalsIgnoreCase(verifyCodeVO.getVerifyCode()) ){    //能从Redis拿到验证码,但是验证不通过
             throw new RuntimeException("验证码不正确,请检查并重试");
         }
+        RedisUtils.invalidateVerifyCode(verifyCodeVO.getPhoneNumber());
     }
 
 }
