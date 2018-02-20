@@ -31,7 +31,7 @@
 					data: { phoneNumber : ($("#phoneNumber").val()) },
 					success: function(data){
 					    if(data.success){	//2.如果请求成功,禁用按钮,显示倒计时,倒计时结束显示重新发送
-							var sec = 5;
+							var sec = 90;
 							var timer = window.setInterval(function(){
                                 if(sec>=1){		//倒计时未结束
                                     $this.text(sec+"秒后重新发送");
@@ -64,7 +64,6 @@
                 $("#bindPhoneForm").submit();
 			})
 		}
-
 
 
         //邮箱的马上绑定按钮事件

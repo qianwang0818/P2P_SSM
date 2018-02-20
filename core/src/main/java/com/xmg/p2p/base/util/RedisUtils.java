@@ -1,6 +1,7 @@
 package com.xmg.p2p.base.util;
 
 import com.xmg.p2p.base.vo.VerifyCodeVO;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
@@ -15,14 +16,20 @@ import java.util.concurrent.TimeUnit;
  * @Author: Squalo
  * @Date: 2018/2/19 - 11:01
  */
-
+@Component
 public class RedisUtils {
+
+    private static RedisTemplate<String,String> redisTemplate;
+    @Autowired
+    public void setRedisTemplate(RedisTemplate<String, String> redisTemplate) {
+        this.redisTemplate = redisTemplate;
+    }
 
     private static final String REDIS_VERIFYCODE_PREFIX = "verifyCode_";
     private static final String REDIS_SENTTIMES_PREFIX = "sentTimes_";
 
     /**得到当前手机号在24h内的发送信息数量*/
-    public static int getSentTimes(RedisTemplate<String,String> redisTemplate, String phoneNumber){
+    public static int getSentTimes(String phoneNumber){
         String sentTimes = redisTemplate.opsForValue().get(REDIS_SENTTIMES_PREFIX + phoneNumber);
         if(sentTimes==null){                                //24h内,本手机号没有发送过验证码
             return 0 ;
@@ -32,7 +39,7 @@ public class RedisUtils {
     }
 
     /**从Redis得到当前的手机短信验证码VerifyCodeVO对象*/
-    public static VerifyCodeVO getCurrentVerifyCode(RedisTemplate<String,String> redisTemplate, String phoneNumber) {
+    public static VerifyCodeVO getCurrentVerifyCode(String phoneNumber) {
         String verifyCodeAndLastSendTime = redisTemplate.opsForValue().get(REDIS_VERIFYCODE_PREFIX+phoneNumber);
         if(verifyCodeAndLastSendTime==null){                //如果之前的验证码已经过五分钟失效或未曾发过验证码.
             return null;
@@ -43,7 +50,7 @@ public class RedisUtils {
     }
 
     /**将手机验证码VO放入Redis*/
-    public static void putVerifyCode(RedisTemplate<String,String> redisTemplate, VerifyCodeVO verifyCodeVO) {
+    public static void putVerifyCode(VerifyCodeVO verifyCodeVO) {
         String verifyCode = verifyCodeVO.getVerifyCode();
         String phoneNumber = verifyCodeVO.getPhoneNumber();
         String lastSendTime = DateUtil.getStringFromDate(verifyCodeVO.getLastSendTime(), "yyyy-MM-dd HH:mm:ss");
@@ -62,4 +69,7 @@ public class RedisUtils {
         //把发送次数存进Redis中,从第五次发送短信开始计时24h不让发送.
         redisTemplate.opsForValue().set(REDIS_SENTTIMES_PREFIX+phoneNumber, sentTimes+"", 1, TimeUnit.DAYS);
     }
+
+
+
 }

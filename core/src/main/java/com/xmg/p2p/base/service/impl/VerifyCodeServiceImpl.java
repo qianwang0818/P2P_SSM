@@ -30,11 +30,11 @@ public class VerifyCodeServiceImpl implements IVerifyCodeService{
     @Override
     public void sendVerifyCode(String phoneNumber) throws RuntimeException {
         //判断24h内短信配额5条是否已用完
-        if( RedisUtils.getSentTimes(redisTemplate, phoneNumber) >= 5){
+        if( RedisUtils.getSentTimes(phoneNumber) >= 5){
             throw new RuntimeException("同一手机号24小时内只能接收5条短信,请明天再试");
         }
 
-        VerifyCodeVO vo = RedisUtils.getCurrentVerifyCode(redisTemplate, phoneNumber);     //从Redis中获取最后一次成功发送验证码的相关信息
+        VerifyCodeVO vo = RedisUtils.getCurrentVerifyCode(phoneNumber);     //从Redis中获取最后一次成功发送验证码的相关信息
         Date currentTime = new Date();                                                      //获得当前时间,后面多处使用
         if(vo==null || DateUtil.secondsBetween(vo.getLastSendTime(), currentTime) >= BidConst.VERIFYCODE_SENDGAP_SECOND){     //还未发送过验证码或距离上次发送超过90秒,满足发送要求
             //生成一个验证码
@@ -42,7 +42,7 @@ public class VerifyCodeServiceImpl implements IVerifyCodeService{
             //发送短信
             log.info("【VerifyCodeServiceImpl:sendVerifyCode】验证码:{},手机号:{},发送时间:{}",verifyCode,phoneNumber, currentTime);
             //把手机号码,验证码,发送时间 装配到VO中并保存到Session
-            RedisUtils.putVerifyCode(redisTemplate, new VerifyCodeVO(verifyCode, phoneNumber, currentTime));
+            RedisUtils.putVerifyCode(new VerifyCodeVO(verifyCode, phoneNumber, currentTime));
         }else{      //不满足发送间隔
             throw new RuntimeException("发送短信过于频繁,请稍后再试");     //TODO 自定义异常
         }
@@ -67,7 +67,7 @@ public class VerifyCodeServiceImpl implements IVerifyCodeService{
     /**用于验证手机验证码,比对Redis*/
     @Override
     public void verifyCode(VerifyCodeVO verifyCodeVO) throws RuntimeException {
-        VerifyCodeVO redisVO = RedisUtils.getCurrentVerifyCode(redisTemplate, verifyCodeVO.getPhoneNumber());
+        VerifyCodeVO redisVO = RedisUtils.getCurrentVerifyCode(verifyCodeVO.getPhoneNumber());
         if(redisVO==null){                                              //根据手机号在Redis找不到验证码,抛异常
             throw new RuntimeException("验证码已过期或不存在,请重新发送手机验证码");
         }

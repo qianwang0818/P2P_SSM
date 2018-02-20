@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import java.util.Date;
 
 /**
- * 存放验证码相关内容,这个对象是放在Session中的
+ * 存放手机验证码相关内容,这个对象是放在Session/Redis中的
  * @Author: Squalo
  * @Date: 2018/2/19 - 10:30     day04_07
  */
