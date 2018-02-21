@@ -23,6 +23,9 @@ public interface ISystemDictionaryService {
     /**查询所有数据字典分类List*/
     List<SystemDictionary> selectAllSystemDictionary();
 
+    /**根据数据字典分类sn 查询明细*/
+    List<SystemDictionaryItem> selectItemByParentSn(String sn);
+
     /**分页查询数据字典明细*/
     PageResult queryDictionaryItem(SystemDictionaryQueryObject systemDictionaryQO);
 

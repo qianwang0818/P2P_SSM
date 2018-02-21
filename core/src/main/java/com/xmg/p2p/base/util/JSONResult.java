@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 public class JSONResult {
 	private boolean success = true;
-	private String msg;
+	private String msg = "成功";
 
 	public JSONResult() {
 		super();

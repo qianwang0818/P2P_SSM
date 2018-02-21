@@ -21,4 +21,7 @@ public interface SystemDictionaryItemMapper {
     List<SystemDictionaryItem> query(SystemDictionaryQueryObject qo);
 
     int updateByPrimaryKey(SystemDictionaryItem record);
+
+    /**根据数据字典分类sn 查询明细*/
+    List<SystemDictionaryItem> selectByParentSn(String sn);
 }

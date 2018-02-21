@@ -1,21 +1,17 @@
 package com.xmg.p2p.base.service.impl;
 
+import com.xmg.p2p.base.domain.SystemDictionaryItem;
 import com.xmg.p2p.base.domain.Userinfo;
 import com.xmg.p2p.base.mapper.UserinfoMapper;
 import com.xmg.p2p.base.service.IUserinfoService;
 import com.xmg.p2p.base.service.IVerifyService;
-import com.xmg.p2p.base.util.BidConst;
 import com.xmg.p2p.base.util.BitStatesUtils;
-import com.xmg.p2p.base.util.RedisUtils;
 import com.xmg.p2p.base.util.UserContext;
 import com.xmg.p2p.base.vo.VerifyCodeVO;
 import com.xmg.p2p.base.vo.VerifyEmailVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import java.util.UUID;
 
 /**
  * 用户相关信息服务
@@ -120,6 +116,35 @@ public class UserinfoServiceImpl implements IUserinfoService {
         this.update(userinfo);
         log.info("【UserinfoServiceImpl:bindEmail】绑定成功! id:{},email:{}",verifyEmailVO.getUserinfoId(),verifyEmailVO.getEmail());
 
+    }
+
+    /**更新用户的基本信息*/
+    @Override
+    public void updateBasicInfo(Userinfo form) {
+        SystemDictionaryItem educationBackground = form.getEducationBackground();
+        SystemDictionaryItem incomeGrade = form.getIncomeGrade();
+        SystemDictionaryItem marriage = form.getMarriage();
+        SystemDictionaryItem kidCount = form.getKidCount();
+        SystemDictionaryItem houseCondition = form.getHouseCondition();
+
+        Userinfo current = this.getCurrent();
+        current.setEducationBackground(educationBackground);
+        current.setIncomeGrade(incomeGrade);
+        current.setMarriage(marriage);
+        current.setKidCount(kidCount);
+        current.setHouseCondition(houseCondition);
+
+        if(educationBackground!=null && incomeGrade!=null && marriage!=null && kidCount!=null && houseCondition!=null){
+            if(!current.isBasicInfo()){
+                current.addState(BitStatesUtils.OP_BASIC_INFO);
+            }
+        }else{      //如果有其中一个基本资料未填写, 设置bitState
+            if(current.isBasicInfo()){
+                current.removeState(BitStatesUtils.OP_BASIC_INFO);
+            }
+        }
+
+        this.update(current);
     }
 
 }

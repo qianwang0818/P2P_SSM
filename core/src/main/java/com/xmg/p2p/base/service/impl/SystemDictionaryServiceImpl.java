@@ -52,6 +52,12 @@ public class SystemDictionaryServiceImpl implements ISystemDictionaryService {
         return systemDictionaryMapper.selectAll();
     }
 
+    /**根据数据字典分类sn 查询明细*/
+    @Override
+    public List<SystemDictionaryItem> selectItemByParentSn(String sn) {
+        return systemDictionaryItemMapper.selectByParentSn(sn);
+    }
+
     /**分页查询数据字典明细*/
     @Override
     public PageResult queryDictionaryItem(SystemDictionaryQueryObject qo) {

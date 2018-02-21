@@ -29,4 +29,7 @@ public interface IUserinfoService {
 
     /**点击认证邮件链接,执行邮箱认证*/
     void bindEmail(String key) throws RuntimeException;
+
+    /**更新用户的基本信息*/
+    void updateBasicInfo(Userinfo userinfo);
 }

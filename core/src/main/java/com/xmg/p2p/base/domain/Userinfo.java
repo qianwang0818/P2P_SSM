@@ -29,6 +29,10 @@ public class Userinfo extends BaseDomain {
         this.bitState = BitStatesUtils.addState(this.bitState, state);
     }
 
+    public void removeState(long state){
+        this.bitState = BitStatesUtils.removeState(this.bitState, state);
+    }
+
     public boolean isBindPhone() {
         return BitStatesUtils.hasState(bitState,BitStatesUtils.OP_BIND_PHONE);
     }

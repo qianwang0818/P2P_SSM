@@ -2,10 +2,15 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.xmg.p2p.base.mapper.SystemDictionaryItemMapper" >
 
-  <resultMap id="BaseResultMap" type="com.xmg.p2p.base.domain.SystemDictionaryItem" >
+  <resultMap id="SimpleResultMap" type="com.xmg.p2p.base.domain.SystemDictionaryItem" >
     <id column="id" property="id" jdbcType="BIGINT" />
-    <result column="parentId" property="parentId" jdbcType="BIGINT" />
     <result column="title" property="title" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <resultMap id="BaseResultMap" type="com.xmg.p2p.base.domain.SystemDictionaryItem" extends="SimpleResultMap" >
+    <!--<id column="id" property="id" jdbcType="BIGINT" />-->
+    <result column="parentId" property="parentId" jdbcType="BIGINT" />
+    <!--<result column="title" property="title" jdbcType="VARCHAR" />-->
     <result column="sequence" property="sequence" jdbcType="TINYINT" />
   </resultMap>
 
@@ -51,5 +56,11 @@
     <include refid="base_where"/>
     order by parentId asc ,sequence asc
     limit #{start},#{pageSize}
+  </select>
+  <select id="selectByParentSn" resultMap="SimpleResultMap" >
+    select i.id , i.title
+    from `systemdictionaryitem` i inner join `systemdictionary` p
+    where i.parentId = p.id and p.sn = #{sn}
+    order by i.sequence asc
   </select>
 </mapper>

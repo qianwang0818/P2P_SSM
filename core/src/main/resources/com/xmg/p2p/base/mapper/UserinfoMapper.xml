@@ -12,11 +12,11 @@
     <result column="email" property="email" jdbcType="VARCHAR" />
     <result column="score" property="score" jdbcType="TINYINT" />
 
-    <association column="incomeGrade_id" property="incomeGrade" javaType="com.xmg.p2p.base.domain.SystemDictionaryItem" select="com.xmg.p2p.base.mapper.SystemDictionaryMapper.selectByPrimaryKey"/>
-    <association column="marriage_id" property="marriage" javaType="com.xmg.p2p.base.domain.SystemDictionaryItem" select="com.xmg.p2p.base.mapper.SystemDictionaryMapper.selectByPrimaryKey"/>
-    <association column="kidCount_id" property="kidCount" javaType="com.xmg.p2p.base.domain.SystemDictionaryItem" select="com.xmg.p2p.base.mapper.SystemDictionaryMapper.selectByPrimaryKey"/>
-    <association column="educationBackground_id" property="educationBackground" javaType="com.xmg.p2p.base.domain.SystemDictionaryItem" select="com.xmg.p2p.base.mapper.SystemDictionaryMapper.selectByPrimaryKey"/>
-    <association column="houseCondition_id" property="houseCondition" javaType="com.xmg.p2p.base.domain.SystemDictionaryItem" select="com.xmg.p2p.base.mapper.SystemDictionaryMapper.selectByPrimaryKey"/>
+    <association column="incomeGrade_id" property="incomeGrade" javaType="com.xmg.p2p.base.domain.SystemDictionaryItem" select="com.xmg.p2p.base.mapper.SystemDictionaryItemMapper.selectByPrimaryKey"/>
+    <association column="marriage_id" property="marriage" javaType="com.xmg.p2p.base.domain.SystemDictionaryItem" select="com.xmg.p2p.base.mapper.SystemDictionaryItemMapper.selectByPrimaryKey"/>
+    <association column="kidCount_id" property="kidCount" javaType="com.xmg.p2p.base.domain.SystemDictionaryItem" select="com.xmg.p2p.base.mapper.SystemDictionaryItemMapper.selectByPrimaryKey"/>
+    <association column="educationBackground_id" property="educationBackground" javaType="com.xmg.p2p.base.domain.SystemDictionaryItem" select="com.xmg.p2p.base.mapper.SystemDictionaryItemMapper.selectByPrimaryKey"/>
+    <association column="houseCondition_id" property="houseCondition" javaType="com.xmg.p2p.base.domain.SystemDictionaryItem" select="com.xmg.p2p.base.mapper.SystemDictionaryItemMapper.selectByPrimaryKey"/>
   </resultMap>
 
   <insert id="insert" parameterType="com.xmg.p2p.base.domain.Userinfo" >
