@@ -29,8 +29,27 @@
     from `systemdictionaryitem`
     where id = #{id,jdbcType=BIGINT}
   </select>
-  <select id="selectAll" resultMap="BaseResultMap" >
+
+  <sql id="base_where">
+    <where>
+      <if test="parentId!=null">
+        and parentId = #{parentId}
+      </if>
+      <if test="keyword!=null">
+        and title like concat('%',#{keyword},'%')
+      </if>
+    </where>
+  </sql>
+  <select id="queryForCount" resultType="java.lang.Integer">
+    select count(id)
+    from `systemdictionaryitem`
+    <include refid="base_where"/>
+  </select>
+  <select id="query" resultMap="BaseResultMap" >
     select <include refid="base_column"/>
     from `systemdictionaryitem`
+    <include refid="base_where"/>
+    order by parentId asc ,sequence asc
+    limit #{start},#{pageSize}
   </select>
 </mapper>

@@ -13,6 +13,8 @@ public class SystemDictionaryQueryObject extends QueryObject {
 
     private String keyword;
 
+    private Long parentId;
+
     public String getKeyword(){        //如果是空字符串,就返回null
         return StringUtils.isEmpty(keyword) ? null : keyword ;
     }

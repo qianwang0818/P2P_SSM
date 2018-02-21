@@ -1,6 +1,10 @@
 package com.xmg.p2p.base.domain;
 
+import com.alibaba.fastjson.JSONObject;
 import lombok.Data;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 数据字典明细
@@ -14,5 +18,14 @@ public class SystemDictionaryItem extends BaseDomain {
     private Long parentId;
     private String title;
     private int sequence;
+
+    public String getJsonString(){
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("id",id);
+        map.put("parentId",parentId);
+        map.put("title",title);
+        map.put("sequence",sequence);
+        return JSONObject.toJSONString(map);
+    }
 
 }

@@ -25,49 +25,64 @@
 				}
 			});
 			
-			//点击分组,查询分组下的明细
+			//分组菜单的点击事件,查询分组下的明细
 			$(".group_item").click(function(){
 				//$("#currentPage").val(1);
-				/*$(this).addClass("active");
-				$("#parentId").val($(this).data("dataid"));*/
+				$("#parentId").val($(this).data("dataid"));	//把值放到form的隐藏input中提交查询
 				$("#searchForm").submit();
 			});
 			
-			//页面刷新的时候,根据当前的parentid把分组选中
+			//拿到Form中隐藏input的parentId值,后面两处使用
 			var parentIdValue=$("#parentId").val();
+
+            //页面刷新的时候,回显parentid
 			if(parentIdValue){
-				$("[data-dataid="+parentIdValue+"]").closest("li").addClass("active");
+				$(".group_item[data-dataid="+parentIdValue+"]").closest("li").addClass("active");
 			}
-			
-			//点击添加明细
-			/*$("#addSystemDictionaryItemBtn").click(function(){
+
+			//分组名称,用于增加or修改模态框的显示
+            var parentName = $("#systemDictionary_group_detail li.active a span").text();
+
+			//增加数据字典明细按钮的点击事件
+			$("#addSystemDictionaryItemBtn").click(function(){
 				if(parentIdValue){
+				    $("#editForm")[0].reset();
 					$("#editFormParentId").val(parentIdValue);
+                    $("#editFormParentName").val(parentName);
 					$("#systemDictionaryItemModal").modal("show");
 				}else{
 					$.messager.popup("请先选择一个分组!");
 				}
-			});*/
+			});
 			
-			//修改或者保存
-            /*$("#editForm").ajaxForm(function(){
-                $.messager.confirm("提示","编辑成功",function(){
+			//修改or保存Form变成AjaxForm
+            $("#editForm").ajaxForm(function(){
+                $.messager.confirm("提示","保存成功",function(){
                     $("#searchForm").submit();
                 });
             });
+            //模态框的保存按钮点击事件
             $("#saveBtn").click(function(){
                 $("#editForm").submit();
-            });*/
+            });
 			
-			//修改
-			/*$(".edit_Btn").click(function(){
+			//修改按钮的点击事件
+			$(".edit_Btn").click(function(){
 				var json=$(this).data("json");
 				$("#systemDictionaryId").val(json.id);
 				$("#editFormParentId").val(json.parentId);
+                $("#editFormParentName").val(parentName);
 				$("#title").val(json.title);
 				$("#sequence").val(json.sequence);
 				$("#systemDictionaryItemModal").modal("show");
-			});*/
+			});
+
+            //为模态框最后一个输入框(顺序输入框)绑定键盘事件,提交表单
+            $("#sequence").keydown(function(e){
+                if(e.keyCode == 13){	//回车
+                    $("#saveBtn").click()			//提交表单
+                }
+            });
 			
 		});
 		</script>
@@ -87,7 +102,7 @@
 				<div class="col-sm-12">
 					<!-- 提交分页的表单 -->
 					<form id="searchForm" class="form-inline" method="post" action="/systemDictionaryItem_list.do">
-						<input type="hidden" id="currentPage" name="currentPage" value="1"/>
+						<input type="hidden" id="currentPage" name="currentPage" value="${(qo.currentPage)!1}"/>
 						<input type="hidden" id="parentId" name="parentId" value='${(qo.parentId)!""}' />
 						<div class="form-group">
 						    <label>关键字</label>
@@ -104,8 +119,8 @@
 								<li class="list-group-item">
 									<a href="#" data-toggle="collapse" data-target="#systemDictionary_group_detail"><span>数据字典分组</span></a>
 									<ul class="in" id="systemDictionary_group_detail">
-										<#list systemDictionaryGroups as vo><!-- id="pg_${vo.id}" -->
-										   <li><a class="group_item" data-dataid="${vo.id}" href="javascript:;"><span>${vo.title}</span></a></li>
+										<#list systemDictionaryGroups as systemDictionary><!-- id="pg_${systemDictionary.id}" -->
+										   <li><a class="group_item" data-dataid="${systemDictionary.id}" href="#"><span>${systemDictionary.title}</span></a></li>
 										</#list>
 									</ul>
 								</li>
@@ -115,18 +130,18 @@
 							<table class="table">
 								<thead>
 									<tr>
-										<th>名称</th>
-										<th>序列</th>
+										<th class="col-sm-5">名称</th>
+										<th class="col-sm-4">序列</th>
 										<th>操作</th>
 									</tr>
 								</thead>
 								<tbody>
-								<#list pageResult.listData as vo>
+								<#list pageResult.listData as systemDictionaryItem>
 									<tr>
-										<td>${vo.title}</td>
-										<td>${vo.sequence!""}</td>
+										<td>${systemDictionaryItem.title}</td>
+										<td>${systemDictionaryItem.sequence!""}</td>
 										<td>
-											<a href="javascript:void(-1);" class="edit_Btn" data-json='${vo.jsonString}'>修改</a> &nbsp; 
+											<a href="javascript:void(-1);" class="edit_Btn" data-json='${systemDictionaryItem.jsonString}'>修改</a> &nbsp;
 										</td>
 									</tr>
 								</#list>
@@ -155,6 +170,13 @@
 	       	  <form id="editForm" class="form-horizontal" method="post" action="systemDictionaryItem_update.do" style="margin: -3px 118px">
 				    <input id="systemDictionaryId" type="hidden" name="id" value="" />
 			    	<input type="hidden" id="editFormParentId" name="parentId" value="" />
+				   	<div class="form-group">
+					    <label class="col-sm-3 control-label">分组</label>
+					    <div class="col-sm-6">
+							<#--这个input不提交,只是显示分组名字,真正提交的是上面隐藏input的parentId-->
+					    	<input class="form-control" id="editFormParentName" disabled>
+					    </div>
+					</div>
 				   	<div class="form-group">
 					    <label class="col-sm-3 control-label">名称</label>
 					    <div class="col-sm-6">
