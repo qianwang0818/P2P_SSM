@@ -4,11 +4,16 @@ import com.xmg.p2p.base.annotation.RequireLogin;
 import com.xmg.p2p.base.domain.Userinfo;
 import com.xmg.p2p.base.service.IRealAuthService;
 import com.xmg.p2p.base.service.IUserinfoService;
+import com.xmg.p2p.base.util.UploadUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 
 /**
  * 实名认证控制
@@ -24,6 +29,9 @@ public class RealAuthController {
 
     @Autowired
     private IRealAuthService realAuthService;
+
+    @Autowired
+    private ServletContext servletContext;  //全局的对象,不能通过方法参数方式注入
 
     @RequireLogin
     @RequestMapping("realAuth")
@@ -44,9 +52,15 @@ public class RealAuthController {
             model.addAttribute("auditing",false);
             return "realAuth_result";
         }
-
-
-
-
     }
+
+    /**不要加RequireLogin???*/
+    @RequestMapping("realAuthUpload")
+    public void realAuthUpload(MultipartFile file){
+        String basePath = servletContext.getRealPath("/upload");
+        String fileName = UploadUtil.upload(file, basePath);
+        log.info("/upload/"+fileName);      //上传地址 D:\Document\JavaDocument\JavaEE_Stage3\P2P_SSM\website\target\website\upload
+    }
+
+
 }

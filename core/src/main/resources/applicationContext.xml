@@ -90,5 +90,11 @@
 		</property>
 	</bean>
 
+	<!--处理文件上传-->
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<!--SpEL: 允许在Spring的配置文件中使用EL表达式 #{ }-->
+		<property name="maxUploadSize" value="#{100*1024*1024}"/>
+	</bean>
+
 
 </beans>

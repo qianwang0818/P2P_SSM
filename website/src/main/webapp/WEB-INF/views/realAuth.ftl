@@ -64,20 +64,20 @@
 			});
 			
 			//把上传身份证正面的a标签变成一个uploadify的组件
-			/*$("#uploadBtn1").uploadify({
-				buttonText:"身份证正面",
-				fileObjName:"file",
-				fileTypeDesc:"身份证正面图片",
-				fileTypeExts:"*.gif; *.jpg; *.png",
-				multi:false,
-				swf:"/js/plugins/uploadify/uploadify.swf",
-				uploader:"/realAuthUpload.do",
-				overrideEvents:["onUploadSuccess","onSelect"],
-				onUploadSuccess:function(file,data){
+			$("#uploadBtn1").uploadify({
+				buttonText: "身份证正面",    //按钮文字
+				fileObjName: "file",    //文件对象名,用于后台找到这个文件
+				fileTypeDesc: "身份证正面图片",    //文件类型描述.文件类型的文字提示信息
+				fileTypeExts: "*.gif; *.jpg; *.png",    //控制文件类型,限制文件后缀名
+				multi: false,    //布尔值,默认true.是否可上传多个文件
+                swf: "/js/plugins/uploadify/uploadify.swf",    //指向uploadify的flash文件地址
+                uploader: "/realAuthUpload.do",    //后台处理flash上传文件的后台地址
+                overrideEvents: ["onUploadSuccess","onSelect"],    //要覆盖的事件
+                onUploadSuccess:function(file,data){
 					$("#uploadImg1").attr("src",data);
 					$("#uploadImage1").val(data);
 				}
-			});*/
+			});
 
 			//处理上传
 			/*$("#uploadBtn2").uploadify({
