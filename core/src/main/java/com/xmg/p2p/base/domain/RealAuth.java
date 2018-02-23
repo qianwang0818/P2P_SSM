@@ -1,8 +1,11 @@
 package com.xmg.p2p.base.domain;
 
+import com.alibaba.fastjson.JSONObject;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 实名认证对象
@@ -33,5 +36,38 @@ public class RealAuth extends BaseDomain {
     private Date auditTime;     //审核时间
     private String remark;      //审核备注
     private int state;          //校验状态
+
+    public String getSexDisplay() {
+        if(this.sex == SEX_MALE){
+            return "男";
+        }else if(this.sex == SEX_FEMALE){
+            return "女";
+        }else{
+            return "妖";
+        }
+    }
+
+    public String getStateDisplay(){
+        switch(state){
+            case STATE_NORMAL: return "待审核";
+            case STATE_AUDIT: return "审核通过";
+            case STATE_REJECT: return "审核拒绝";
+            default: return "未知的审核状态";
+        }
+    }
+
+    public String getJsonString(){
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("id",id);
+        map.put("applier",this.applier.getUsername());
+        map.put("realName",realName);
+        map.put("idNumber",idNumber);
+        map.put("sex",getSexDisplay());
+        map.put("birthDate",birthDate);
+        map.put("address",address);
+        map.put("image1",image1);
+        map.put("image2",image2);
+        return JSONObject.toJSONString(map);
+    }
 
 }

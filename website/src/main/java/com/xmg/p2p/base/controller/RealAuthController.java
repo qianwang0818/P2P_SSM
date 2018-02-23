@@ -1,15 +1,19 @@
 package com.xmg.p2p.base.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.xmg.p2p.base.annotation.RequireLogin;
+import com.xmg.p2p.base.domain.RealAuth;
 import com.xmg.p2p.base.domain.Userinfo;
 import com.xmg.p2p.base.service.IRealAuthService;
 import com.xmg.p2p.base.service.IUserinfoService;
+import com.xmg.p2p.base.util.JSONResult;
 import com.xmg.p2p.base.util.UploadUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.ServletConfig;
@@ -47,8 +51,8 @@ public class RealAuthController {
                 return "realAuth_result";
             }
         }else{      //如果用户已经实名认证       //(3)根据userinfo上的realAuthId得到实名认证对象,放到model,设置审核中标记位false,跳到realAuth_result.ftl
-
-            model.addAttribute("realAuth",realAuthService.get(current.getId()));
+            //model.addAttribute("userinfo",userinfoService.getCurrent());
+            model.addAttribute("realAuth",realAuthService.get(current.getRealAuthId()));
             model.addAttribute("auditing",false);
             return "realAuth_result";
         }
@@ -56,11 +60,28 @@ public class RealAuthController {
 
     /**不要加RequireLogin???*/
     @RequestMapping("realAuthUpload")
-    public void realAuthUpload(MultipartFile file){
+    @ResponseBody
+    public String realAuthUpload(MultipartFile file){
         String basePath = servletContext.getRealPath("/upload");
         String fileName = UploadUtil.upload(file, basePath);
-        log.info("/upload/"+fileName);      //上传地址 D:\Document\JavaDocument\JavaEE_Stage3\P2P_SSM\website\target\website\upload
+        //上传地址 D:/Document/JavaDocument/JavaEE_Stage3/P2P_SSM/website/target/website/upload
+        return "/upload/"+fileName;
     }
 
+    /**申请实名认证*/
+    @RequireLogin
+    @RequestMapping("realAuth_save")
+    @ResponseBody
+    public JSONResult realAuthSave(RealAuth realAuth){
+        JSONResult jsonResult = new JSONResult("实名认证申请资料提交成功!");
+        try {
+            realAuthService.apply(realAuth);
+        } catch (RuntimeException e) {
+            log.error(e.getMessage());
+            jsonResult.setSuccess(false);
+            jsonResult.setMsg(e.getMessage());
+        }
+        return jsonResult;
+    }
 
 }

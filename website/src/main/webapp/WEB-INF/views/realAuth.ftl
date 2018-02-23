@@ -7,6 +7,7 @@
 		<link type="text/css" rel="stylesheet" href="/css/account.css" />
 		<script type="text/javascript" src="/js/plugins/uploadify/jquery.uploadify.min.js"></script>
 		<script type="text/javascript" src="/js/plugins/jquery.form.js"></script>
+        <script type="text/javascript" src="/js/My97DatePicker/WdatePicker.js" ></script>
 		<style type="text/css">
 			#realAuthForm input ,#realAuthForm select{
 				width: 260px;
@@ -54,8 +55,15 @@
 			}
 		</style>
 		<script type="text/javascript">
-		
+
 		$(function(){
+
+            //日期格式化工具
+            $("#birthDate").click(function(){
+                WdatePicker();
+            });
+
+            //身份证模板的悬停显示
 			$("#viewExample").popover({
 				html:true,
 				content:'正面<img src="/images/upload_source_2.jpg" class="uploadExample"/><br/>反面<img src="/images/upload_source_2_1.jpg" class="uploadExample"/>',				
@@ -72,15 +80,13 @@
 				multi: false,    //布尔值,默认true.是否可上传多个文件
                 swf: "/js/plugins/uploadify/uploadify.swf",    //指向uploadify的flash文件地址
                 uploader: "/realAuthUpload.do",    //后台处理flash上传文件的后台地址
-                overrideEvents: ["onUploadSuccess","onSelect"],    //要覆盖的事件
+                overrideEvents: ["onUploadSuccess","onSelect"],    //要覆盖的事件,onSelect默认会弹出奇怪的东西
                 onUploadSuccess:function(file,data){
 					$("#uploadImg1").attr("src",data);
 					$("#uploadImage1").val(data);
 				}
 			});
-
-			//处理上传
-			/*$("#uploadBtn2").uploadify({
+			$("#uploadBtn2").uploadify({
 				buttonText:"身份证反面",
 				fileObjName:"file",
 				fileTypeDesc:"身份证反面图片",
@@ -93,14 +99,14 @@
 					$("#uploadImg2").attr("src",data);
 					$("#uploadImage2").val(data);
 				}
-			});*/
+			});
 			
 			//Ajax提交表单
-			/*$("#realAuthForm").ajaxForm(function(){
-				$.messager.confirm("提示","实名认证申请提交成功!",function(){
+			$("#realAuthForm").ajaxForm(function(data){
+				$.messager.confirm("提示",data.msg,function(){
 					window.location.reload();
 				});
-			});*/
+			});
 		});
 		</script>
 	</head>
@@ -144,8 +150,8 @@
 						        	<label class="col-sm-4  control-label" for="sex">性别</label>
 					        		<div class="col-sm-8">
 						        		<select id="sex" class="form-control" name="sex" size="1">
-											<option value="0">男</option>
-											<option value="1">女</option>
+											<option value="1">男</option>
+											<option value="0">女</option>
 										</select>
 						        	</div>
 						        </div>

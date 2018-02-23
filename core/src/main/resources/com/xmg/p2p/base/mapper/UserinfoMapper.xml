@@ -28,7 +28,7 @@
       houseCondition_id)
     values (#{id}, 0 , #{bitState,jdbcType=BIGINT}, #{realName,jdbcType=VARCHAR},
       #{idNumber,jdbcType=VARCHAR}, #{phoneNumber,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR},
-      #{score,jdbcType=TINYINT},#{realAuthId,jdbcType=BIGINT} #{incomeGrade.id,jdbcType=BIGINT},
+      #{score,jdbcType=TINYINT},#{realAuthId,jdbcType=BIGINT}, #{incomeGrade.id,jdbcType=BIGINT},
       #{marriage.id,jdbcType=BIGINT}, #{kidCount.id,jdbcType=BIGINT}, #{educationBackground.id,jdbcType=BIGINT},
       #{houseCondition.id,jdbcType=BIGINT})
   </insert>

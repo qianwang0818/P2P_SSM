@@ -39,11 +39,11 @@
 								<table style="width: 100%;height: 100px;">
 									<tr>
 										<td><span>真实姓名： ${realAuth.realName}</span></td>
-										<td><span>性别：${realAuth.sexDisplay}</span></td>
+										<td><span>性别：${realAuth.getSexDisplay()}</span></td>
 									</tr>
 									<tr>
-										<td><span>证件号码： ${realAuth.idNumber}</span></td>
-										<td><span>出生日期：${(realAuth.bornDate)!''}</span></td>
+										<td><span>证件号码： ${realAuth.idNumber }</span></td>
+										<td><span>出生日期：${(realAuth.birthDate)!''}</span></td>
 									</tr>
 								</table>
 							</div>
