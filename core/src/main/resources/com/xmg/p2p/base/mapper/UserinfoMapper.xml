@@ -11,6 +11,7 @@
     <result column="phoneNumber" property="phoneNumber" jdbcType="VARCHAR" />
     <result column="email" property="email" jdbcType="VARCHAR" />
     <result column="score" property="score" jdbcType="TINYINT" />
+    <result column="realAuth_id" property="realAuthId" jdbcType="BIGINT" />
 
     <association column="incomeGrade_id" property="incomeGrade" javaType="com.xmg.p2p.base.domain.SystemDictionaryItem" select="com.xmg.p2p.base.mapper.SystemDictionaryItemMapper.selectByPrimaryKey"/>
     <association column="marriage_id" property="marriage" javaType="com.xmg.p2p.base.domain.SystemDictionaryItem" select="com.xmg.p2p.base.mapper.SystemDictionaryItemMapper.selectByPrimaryKey"/>
@@ -21,11 +22,13 @@
 
   <insert id="insert" parameterType="com.xmg.p2p.base.domain.Userinfo" >
     insert into `userinfo` (id, version, bitState, realName,
-      idNumber, phoneNumber, email, score, incomeGrade_id,
+      idNumber, phoneNumber, email,
+      score, realAuth_id, incomeGrade_id,
       marriage_id, kidCount_id, educationBackground_id, 
       houseCondition_id)
     values (#{id}, 0 , #{bitState,jdbcType=BIGINT}, #{realName,jdbcType=VARCHAR},
-      #{idNumber,jdbcType=VARCHAR}, #{phoneNumber,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, #{score,jdbcType=TINYINT}, #{incomeGrade.id,jdbcType=BIGINT},
+      #{idNumber,jdbcType=VARCHAR}, #{phoneNumber,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR},
+      #{score,jdbcType=TINYINT},#{realAuthId,jdbcType=BIGINT} #{incomeGrade.id,jdbcType=BIGINT},
       #{marriage.id,jdbcType=BIGINT}, #{kidCount.id,jdbcType=BIGINT}, #{educationBackground.id,jdbcType=BIGINT},
       #{houseCondition.id,jdbcType=BIGINT})
   </insert>
@@ -38,6 +41,7 @@
       phoneNumber = #{phoneNumber,jdbcType=VARCHAR},
       email = #{email,jdbcType=VARCHAR},
       score = #{score,jdbcType=TINYINT},
+      realAuth_id = #{realAuthId,jdbcType=BIGINT},
       incomeGrade_id = #{incomeGrade.id,jdbcType=BIGINT},
       marriage_id = #{marriage.id,jdbcType=BIGINT},
       kidCount_id = #{kidCount.id,jdbcType=BIGINT},
@@ -47,7 +51,7 @@
   </update>
 
   <sql id="base_column">
-    id, version, bitState, realName, idNumber, phoneNumber, email, score, incomeGrade_id, marriage_id,
+    id, version, bitState, realName, idNumber, phoneNumber, email, score, realAuth_id, incomeGrade_id, marriage_id,
     kidCount_id, educationBackground_id, houseCondition_id
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
