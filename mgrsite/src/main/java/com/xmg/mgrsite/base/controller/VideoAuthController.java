@@ -3,6 +3,8 @@ package com.xmg.mgrsite.base.controller;
 import com.xmg.p2p.base.domain.VideoAuth;
 import com.xmg.p2p.base.query.PageResult;
 import com.xmg.p2p.base.query.VideoAuthQueryObject;
+import com.xmg.p2p.base.service.ILogininfoService;
+import com.xmg.p2p.base.service.IUserinfoService;
 import com.xmg.p2p.base.service.IVideoService;
 import com.xmg.p2p.base.util.JSONResult;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +14,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * 视频认证控制层
@@ -24,6 +29,9 @@ public class VideoAuthController {
 
     @Autowired
     private IVideoService videoService;
+
+    @Autowired
+    private ILogininfoService logininfoService;
 
     /**点击菜单栏跳转到视频审核页面*/
     @RequestMapping("videoAuth")
@@ -45,6 +53,13 @@ public class VideoAuthController {
             jsonResult.setMsg(e.getMessage());
         }
         return jsonResult;
+    }
+
+    /**用于用户的用户名自动补全*/
+    @RequestMapping("videoAuth_autoComplete")
+    @ResponseBody
+    public List<Map<String,Object>> AutoComplete(String keyword){
+        return logininfoService.autoComplete(keyword);
     }
 
 }

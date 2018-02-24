@@ -2,6 +2,9 @@ package com.xmg.p2p.base.service;
 
 import com.xmg.p2p.base.domain.Logininfo;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * 登陆相关服务
  * @Author: Squalo
@@ -37,4 +40,7 @@ public interface ILogininfoService {
      */
     void initAdmin();
 
+
+    /**用于用户的用户名自动补全,返回一个List,里面的Map有两个字段:{id:id,username:username}*/
+    List<Map<String,Object>> autoComplete(String keyword);
 }

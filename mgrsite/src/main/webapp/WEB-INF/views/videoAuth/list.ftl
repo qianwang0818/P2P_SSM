@@ -4,13 +4,10 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>蓝源Eloan-P2P平台(系统管理平台)</title> <#include "../common/header.ftl"/>
 <script type="text/javascript" src="/js/plugins/jquery.form.js"></script>
-<script type="text/javascript"
-	src="/js/plugins/jquery-validation/jquery.validate.js"></script>
-<script type="text/javascript"
-	src="/js/plugins/jquery.twbsPagination.min.js"></script>
+<script type="text/javascript" src="/js/plugins/jquery-validation/jquery.validate.js"></script>
+<script type="text/javascript" src="/js/plugins/jquery.twbsPagination.min.js"></script>
 <script type="text/javascript" src="/js/My97DatePicker/WdatePicker.js"></script>
-<script type="text/javascript"
-	src="/js/plugins/bootstrap3-typeahead.min.js"></script>
+<script type="text/javascript" src="/js/plugins/bootstrap3-typeahead.min.js"></script>
 
 <script type="text/javascript">
 	$(function(){
@@ -65,24 +62,18 @@
 		
 		//自动补全
 		$("#loginInfoDisplay").typeahead({
-			minLength:3,//最小开始查询的字符个数
-			items:5,//下拉列表中最多显示的条数
-			source:function(query,process){//加载数据源
-				//我们使用ajax去查询
-				$.ajax({
-					dataType:"json",
-					type:"POST",
-					url:"videoAuth_autocomplate.do",
-					data:{keyword:query},
-					success:function(data){//这个data就是一个json对象的数组{id:xx,username:xxxx}
-						if(data && data.length){
-							process(data);//process就是交给我们获得数据之后用来调用的方法,这个方法执行了,下拉列表就出来了
-						}
-					}
-				});
+			minLength: 3,		//最小开始查询的字符个数
+			items: 5,			//下拉列表中最多显示的条数
+			source: function(query,process){	//加载数据源
+				//使用ajax异步查询
+				$.post("videoAuth_autoComplete.do",{keyword:query},function(data){
+				    //data就是一个json对象的数组{id:xx,username:xxxx}
+                    if(data && data.length){	//如果数据有长度
+                        process(data);		//process是在我们获得数据之后,被调用的方法.这个方法执行了,下拉列表就显示出来了
+                    }
+				},"json");
 			},
-			//用来告诉typeahead怎么显示json对象中的内容
-			displayText:function(item){
+			displayText:function(item){	//用来告诉typeahead怎么显示json对象中的内容
 				return item.username
 			}
 		}).change(function(){
@@ -91,6 +82,7 @@
 				$("#loginInfoValue").val(current.id);
 			}
 		});
+
 	});
 	</script>
 </head>
@@ -186,7 +178,7 @@
 						<div class="form-group">
 							<label class="col-sm-2 control-label">用户</label>
 							<div class="col-sm-6">
-								<div class="dropdown" id="autocomplate">
+								<div class="dropdown" id="autocomplete">
 									<input type="text" class="form-control" id="loginInfoDisplay" autocomplete="off" />
                                     <input type="text" name="id" id="loginInfoValue"/>
 								</div>

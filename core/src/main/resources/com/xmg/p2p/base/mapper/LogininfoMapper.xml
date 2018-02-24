@@ -57,4 +57,11 @@
     where userType = #{userType}
   </select>
 
+  <select id="autoComplete" resultType="java.util.Map">
+    select id, username
+    from `logininfo`
+    where username like concat(#{keyword},'%')
+    and userType = #{userType}
+  </select>
+
 </mapper>

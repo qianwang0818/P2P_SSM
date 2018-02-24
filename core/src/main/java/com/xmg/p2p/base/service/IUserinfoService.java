@@ -3,6 +3,9 @@ package com.xmg.p2p.base.service;
 import com.xmg.p2p.base.domain.Userinfo;
 import com.xmg.p2p.base.vo.VerifyCodeVO;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * 用户相关信息服务
  * @Author: Squalo
@@ -32,4 +35,5 @@ public interface IUserinfoService {
 
     /**更新用户的基本信息*/
     void updateBasicInfo(Userinfo userinfo);
+
 }

@@ -2,6 +2,7 @@ package com.xmg.p2p.base.mapper;
 
 import com.xmg.p2p.base.domain.Userinfo;
 import java.util.List;
+import java.util.Map;
 
 /***
  * day03_04

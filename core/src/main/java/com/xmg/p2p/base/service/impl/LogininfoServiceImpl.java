@@ -16,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 登录业务层实现类
@@ -92,4 +94,9 @@ public class LogininfoServiceImpl implements ILogininfoService {
         }
     }
 
+    /**用于用户的用户名自动补全,返回一个List,里面的Map有两个字段:{id:id,username:username}*/
+    @Override
+    public List<Map<String, Object>> autoComplete(String keyword) {
+        return logininfoMapper.autoComplete(keyword, Logininfo.USER_CLIENT);
+    }
 }
