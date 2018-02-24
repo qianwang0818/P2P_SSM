@@ -51,7 +51,7 @@ public class Userinfo extends BaseDomain {
     }
 
     public boolean isVideoAuth() {
-        return BitStatesUtils.hasState(bitState,BitStatesUtils.OP_REAL_AUTH);
+        return BitStatesUtils.hasState(bitState,BitStatesUtils.OP_VEDIO_AUTH);
     }
 
 }

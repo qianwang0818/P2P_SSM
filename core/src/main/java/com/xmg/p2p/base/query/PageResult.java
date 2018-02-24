@@ -25,7 +25,11 @@ public class PageResult {
 	private Integer nextPage;// 下一页
 	private Integer totalPage;// 总页数
 
-	// 如果总数据条数为0,返回一个空集
+	public PageResult(String s) {
+
+	}
+
+    // 如果总数据条数为0,返回一个空集
 	public static PageResult empty(Integer pageSize) {
 		return new PageResult(new ArrayList<>(), 0, 1, pageSize);
 	}

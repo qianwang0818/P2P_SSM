@@ -12,7 +12,7 @@ import java.util.List;
  */
 public interface VideoAuthMapper {
 
-    int insert(VideoAuth record);
+    int insert(VideoAuth videoAuth);
 
     VideoAuth selectByPrimaryKey(Long id);
 
@@ -20,6 +20,6 @@ public interface VideoAuthMapper {
     int queryForCount(VideoAuthQueryObject qo);
 
     /**分页条件查询数据list*/
-    List<RealAuth> query(VideoAuthQueryObject qo);
+    List<VideoAuth> query(VideoAuthQueryObject qo);
 
 }

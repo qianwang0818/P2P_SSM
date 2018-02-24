@@ -48,10 +48,12 @@
 								材料认证分数达到${baseAuthScore}分<span class="glyphicon glyphicon-ok" style="color:green;">
 							</span></#if>
 						</li>
-						<li>视频认证
+						<li>
 							<#if !(userinfo.isVideoAuth())>
+                                <a href="#">视频认证</a>
 								<span class="glyphicon glyphicon-remove" style="color:red;"></span>
 							<#else>
+								视频认证
 								<span class="glyphicon glyphicon-ok" style="color:green;"></span>
 							</#if>
 						</li>

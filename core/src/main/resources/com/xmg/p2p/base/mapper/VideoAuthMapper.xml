@@ -62,12 +62,13 @@
     <include refid="base_where" />
   </select>
 
-  <select id="query" resultType="com.xmg.p2p.base.domain.RealAuth">
+  <select id="query" resultMap="BaseResultMap">
     select <include refid="base_column" />
     from `videoauth` v
     join logininfo as ap on v.applier_id = ap.id
     join logininfo as au on v.auditor_id = au.id
     <include refid="base_where" />
+    order by v.auditTime desc
     limit #{start},#{pageSize}
   </select>
 </mapper>
