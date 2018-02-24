@@ -65,7 +65,27 @@
                     </dependency>
                 </dependencies>
             </plugin>
+
+            <!--资源拷贝插件-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.0.2</version>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
         </plugins>
+
+        <!--IDEA不会编译java目录的非java文件.如果需要读取文件,需要手动指定读取规则-->
+        <resources>
+            <resource>
+                <directory>src/main/java/com/xmg/p2p/base/mapper</directory>
+                <includes>
+                    <include>**/*.xml</include>
+                </includes>
+            </resource>
+        </resources>
     </build>
 
 </project>

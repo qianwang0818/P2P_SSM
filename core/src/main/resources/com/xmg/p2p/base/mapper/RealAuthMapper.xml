@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xmg.p2p.base.mapper.RealAuthMapper" >
+  <resultMap id="SimpleResultMap" type="com.xmg.p2p.base.domain.RealAuth" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="realName" property="realName"/>
+    <result column="sex" property="sex" jdbcType="TINYINT" />
+    <result column="birthDate" property="birthDate" jdbcType="VARCHAR" />
+    <result column="idNumber" property="idNumber" />
+    <result column="address" property="address" jdbcType="VARCHAR" />
+    <result column="state" property="state" jdbcType="TINYINT" />
+    <result column="image1" property="image1" jdbcType="VARCHAR" />
+    <result column="image2" property="image2" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="auditTime" property="auditTime" jdbcType="TIMESTAMP" />
+    <result column="applyTime" property="applyTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+
+  <resultMap id="BaseResultMap" type="com.xmg.p2p.base.domain.RealAuth" extends="SimpleResultMap">
+    <association property="applier" javaType="com.xmg.p2p.base.domain.Logininfo" columnPrefix="ap_">
+      <id property="id" column="id"/>
+      <result property="username" column="username"/>
+    </association>
+    <association property="auditor" javaType="com.xmg.p2p.base.domain.Logininfo" columnPrefix="au_">
+      <id property="id" column="id"/>
+      <result property="username" column="username"/>
+    </association>
+  </resultMap>
+
+  <insert id="insert" parameterType="com.xmg.p2p.base.domain.RealAuth" useGeneratedKeys="true" keyProperty="id" >
+    insert into `realauth` (realName, sex, idNumber, 
+      birthDate, address, image1, 
+      image2, applier_id, applyTime, 
+      auditor_id, auditTime, remark, 
+      state)
+    values (#{realName,jdbcType=VARCHAR}, #{sex,jdbcType=TINYINT}, #{idNumber,jdbcType=VARCHAR},
+      #{birthDate,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, #{image1,jdbcType=VARCHAR},
+      #{image2,jdbcType=VARCHAR}, #{applier.id,jdbcType=BIGINT}, #{applyTime,jdbcType=TIMESTAMP},
+      #{auditor.id,jdbcType=BIGINT}, #{auditTime,jdbcType=TIMESTAMP}, #{remark,jdbcType=VARCHAR},
+      #{state,jdbcType=TINYINT})
+  </insert>
+
+  <update id="updateByPrimaryKey" parameterType="com.xmg.p2p.base.domain.RealAuth" >
+    update `realauth`
+    set realName = #{realName,jdbcType=VARCHAR},
+      sex = #{sex,jdbcType=TINYINT},
+      idNumber = #{idNumber,jdbcType=VARCHAR},
+      birthDate = #{birthDate,jdbcType=VARCHAR},
+      address = #{address,jdbcType=VARCHAR},
+      image1 = #{image1,jdbcType=VARCHAR},
+      image2 = #{image2,jdbcType=VARCHAR},
+      applier_id = #{applier.id,jdbcType=BIGINT},
+      applyTime = #{applyTime,jdbcType=TIMESTAMP},
+      auditor_id = #{auditor.id,jdbcType=BIGINT},
+      auditTime = #{auditTime,jdbcType=TIMESTAMP},
+      remark = #{remark,jdbcType=VARCHAR},
+      state = #{state,jdbcType=TINYINT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <sql id="simple_column">
+    id, realName, sex, birthDate, idNumber, address, state, image1, image2, remark, auditTime, applyTime
+  </sql>
+
+  <sql id="base_column">
+    r.id, r.realName, r.sex, r.birthDate, r.idNumber, r.address, r.state, r.image1, r.image2, r.remark,r.auditTime, r.applyTime,
+    ap.id as ap_id, ap.username as ap_username, au.id as au_id, au.username as au_username
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select <include refid="base_column"/>
+    from `realauth` as r
+    join logininfo ap on r.applier_id = ap.id
+    left join logininfo au on r.auditor_id = au.id
+    where r.id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <sql id="base_where">
+    <where>
+      <if test="state>-1">
+        and r.state = #{state}
+      </if>
+      <if test="beginDate!=null">
+        <![CDATA[
+           and r.applyTime >= #{beginDate}
+        ]]>
+      </if>
+      <if test="endDate!=null">
+        <![CDATA[
+           and r.applyTime <= #{endDate}
+        ]]>
+      </if>
+    </where>
+  </sql>
+
+  <select id="queryForCount" resultType="java.lang.Integer">
+    select count(id)
+    from realauth r
+    <include refid="base_where" />
+  </select>
+
+  <select id="query" resultMap="BaseResultMap">
+    select <include refid="base_column" />
+    from `realauth` r
+    join logininfo ap on r.applier_id = ap.id
+    left join logininfo au on r.auditor_id = au.id
+    <include refid="base_where" />
+    limit #{start},#{pageSize}
+  </select>
+
+</mapper>
