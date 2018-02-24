@@ -180,7 +180,7 @@
 							<div class="col-sm-6">
 								<div class="dropdown" id="autocomplete">
 									<input type="text" class="form-control" id="loginInfoDisplay" autocomplete="off" />
-                                    <input type="text" name="id" id="loginInfoValue"/>
+                                    <input type="hidden" name="id" id="loginInfoValue"/>
 								</div>
 							</div>
 						</div>

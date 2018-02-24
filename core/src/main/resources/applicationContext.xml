@@ -20,7 +20,7 @@
 	<context:component-scan base-package="com.xmg.p2p"/>
 
 	<!--1.导入db.properties-->
-	<context:property-placeholder location="classpath:db.properties,classpath:redis.properties,classpath:mail.properties"/>
+	<context:property-placeholder location="classpath:db.properties,classpath:redis.properties,classpath:mail.properties,classpath:host.properties"/>
 
 	<!--2.配置数据源-->
 	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">

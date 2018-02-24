@@ -1,7 +1,10 @@
 package com.xmg.p2p.base.domain;
 
 import com.alibaba.fastjson.JSONObject;
+import com.xmg.p2p.base.config.MyConfig;
 import lombok.Data;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -46,8 +49,9 @@ public class RealAuth extends BaseAuditDomain {
         map.put("sex",getSexDisplay());
         map.put("birthDate",birthDate);
         map.put("address",address);
-        map.put("image1",image1);
-        map.put("image2",image2);
+        String prefix = MyConfig.websiteHost;
+        map.put("image1",prefix + image1);
+        map.put("image2",prefix + image2);
         return JSONObject.toJSONString(map);
     }
 
