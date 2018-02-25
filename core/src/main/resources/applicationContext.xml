@@ -48,7 +48,7 @@
 			<tx:method name="list*" read-only="true"/>
 			<tx:method name="get*" read-only="true"/>
 			<tx:method name="query*" read-only="true"/>
-			<tx:method name="*"/>
+			<tx:method name="*" propagation="REQUIRED" isolation="DEFAULT" rollback-for="java.lang.Exception"/>
 		</tx:attributes>
 	</tx:advice>
 	<!--6.aop切面事务-->
@@ -60,6 +60,8 @@
 	<!--7.扫描并注册mapper接口-->
 	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
 		<property name="basePackage" value="com.xmg.p2p.base.mapper" />
+		<!--有多个数据库时才有必要配置,指定sqlSessionFactory-->
+		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
 	</bean>
 	<!--自定义标签,与上面三行作用相同-->
 	<!--<mybatis:scan base-package="com.xmg.p2p.base.mapper"/>-->
