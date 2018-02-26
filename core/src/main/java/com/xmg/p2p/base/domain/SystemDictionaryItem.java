@@ -2,6 +2,7 @@ package com.xmg.p2p.base.domain;
 
 import com.alibaba.fastjson.JSONObject;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,6 +14,7 @@ import java.util.Map;
  */
 
 @Data
+@NoArgsConstructor
 public class SystemDictionaryItem extends BaseDomain {
 
     private Long parentId;
@@ -28,4 +30,7 @@ public class SystemDictionaryItem extends BaseDomain {
         return JSONObject.toJSONString(map);
     }
 
+    public SystemDictionaryItem(Long id) {
+        this.id = id;
+    }
 }

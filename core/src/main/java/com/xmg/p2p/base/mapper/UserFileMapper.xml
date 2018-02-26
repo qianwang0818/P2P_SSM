@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xmg.p2p.base.mapper.UserFileMapper" >
+
+  <resultMap id="BaseResultMap" type="com.xmg.p2p.base.domain.UserFile" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="file" property="file" jdbcType="VARCHAR" />
+    <result column="state" property="state" jdbcType="TINYINT" />
+    <result column="score" property="score" jdbcType="TINYINT" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="applyTime" property="applyTime" jdbcType="TIMESTAMP" />
+    <result column="auditTime" property="auditTime" jdbcType="TIMESTAMP" />
+    <association property="applier" javaType="com.xmg.p2p.base.domain.Logininfo" columnPrefix="ap_">
+      <id column="id" property="id"/>
+      <result column="username" property="username"/>
+    </association>
+  </resultMap>
+
+  <resultMap id="UserListResultMap" type="com.xmg.p2p.base.domain.UserFile" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="file" property="file" jdbcType="VARCHAR" />
+    <result column="state" property="state" jdbcType="TINYINT" />
+    <result column="score" property="score" jdbcType="TINYINT" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="applyTime" property="applyTime" jdbcType="TIMESTAMP" />
+    <result column="auditTime" property="auditTime" jdbcType="TIMESTAMP" />
+    <association property="fileType" javaType="com.xmg.p2p.base.domain.SystemDictionaryItem" columnPrefix="sd_">
+      <id column="id" property="id"/>
+      <result column="title" property="title"/>
+    </association>
+  </resultMap>
+
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from `userfile`
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+
+  <insert id="insert" parameterType="com.xmg.p2p.base.domain.UserFile" useGeneratedKeys="true" keyProperty="id" >
+    insert into `userfile` (state, score, file, 
+      remark, applyTime, auditTime, 
+      fileType_id, applier_id, auditor_id)
+    values (#{state,jdbcType=TINYINT}, #{score,jdbcType=TINYINT}, #{file,jdbcType=VARCHAR}, 
+      #{remark,jdbcType=VARCHAR}, #{applyTime,jdbcType=TIMESTAMP}, #{auditTime,jdbcType=TIMESTAMP},
+      #{fileType.id,jdbcType=BIGINT}, #{applier.id,jdbcType=BIGINT}, #{auditor.id,jdbcType=BIGINT})
+  </insert>
+
+  <update id="updateByPrimaryKey" parameterType="com.xmg.p2p.base.domain.UserFile" >
+    update `userfile`
+    set state = #{state,jdbcType=TINYINT},
+      score = #{score,jdbcType=TINYINT},
+      file = #{file,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR},
+      applyTime = #{applyTime,jdbcType=TIMESTAMP},
+      auditTime = #{auditTime,jdbcType=TIMESTAMP},
+      fileType_id = #{fileType.id,jdbcType=BIGINT},
+      applier_id = #{applier.id,jdbcType=BIGINT},
+      auditor_id = #{auditor.id,jdbcType=BIGINT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select f.id, f.state, f.score, f.file, f.remark, f.applyTime, f.auditTime,
+      ap.id as ap_id, ap.username as ap_username
+    from `userfile` f
+    join logininfo ap
+    on f.applier_id=ap.id
+    where f.id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select id, state, score, file, remark, applyTime, auditTime, fileType_id, applier_id, auditor_id
+    from `userfile`
+  </select>
+
+  <select id="selectFilesByApplierIdAndHasType" resultMap="UserListResultMap">
+    select f.id, f.state, f.score, f.file, f.remark, f.applyTime, f.auditTime,
+      sd.id as sd_id, sd.title as sd_title
+    from `userfile` as f
+    left join systemdictionaryitem as sd
+    on f.fileType_id=sd.id
+    where f.applier_id = #{applierId}
+    <choose>
+      <when test="hasType">
+        and f.fileType_id is not null
+      </when>
+      <otherwise>
+        and f.fileType_id is null
+      </otherwise>
+    </choose>
+  </select>
+
+</mapper>
