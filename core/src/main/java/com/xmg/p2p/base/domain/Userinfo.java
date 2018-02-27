@@ -59,4 +59,8 @@ public class Userinfo extends BaseDomain {
         this.score += add;
     }
 
+    //用户是否有一个借款正在处理流程当中
+    public boolean hasBidRequestProcess(){
+        return BitStatesUtils.hasState(bitState,BitStatesUtils.OP_HAS_BIDREQUEST_PROCESS);
+    }
 }

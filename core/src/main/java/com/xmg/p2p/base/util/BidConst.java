@@ -39,6 +39,33 @@ public class BidConst {
     /**基本风控认证分数,可借款的及格分*/
     public static final int BASE_AUTH_SCORE = 30;
 
+    //还款类型
+    public final static int RETURN_TYPE_MONTH_INTEREST_PRINCIPAL = 0;   //按月分期,等额本息
+    public final static int RETURN_TYPE_MONTH_INTEREST = 1;   //按月到期,先息后本
+
+    //标的类型
+    public final static int BIDREQUEST_TYPE_NORMAL = 0;   //普通信用标
+
+    //借款状态
+    public final static int BIDREQUEST_STATE_PUBLISH_PENDING = 0;       //待发布
+    public final static int BIDREQUEST_STATE_BIDDING = 1;                //招标中
+    public final static int BIDREQUEST_STATE_UNDO = 2;                   //已撤销
+    public final static int BIDREQUEST_STATE_BIDDING_OVERDUE = 3;       //流标
+    public final static int BIDREQUEST_STATE_APPROVE_PENGDING_1 = 4;   //满标一审
+    public final static int BIDREQUEST_STATE_APPROVE_PENGDING_2 = 5;   //满标二审
+    public final static int BIDREQUEST_STATE_REJECTED = 6;              //满标审核被拒绝
+    public final static int BIDREQUEST_STATE_PAYING_BACK = 7;           //还款中
+    public final static int BIDREQUEST_STATE_COMPLETE_PAY_BACK = 8;    //已还清
+    public final static int BIDREQUEST_STATE_PAY_BACK_OVERDUE = 9;     //逾期
+    public final static int BIDREQUEST_STATE_PUBLISH_REFUSE = 10;       //发标审核拒绝
+
+    //系统限制的借款相关额度
+    public static final BigDecimal MIN_BID_AMOUNT = new BigDecimal("50.0000");           //系统规定最小投标金额
+    public static final BigDecimal MIN_BIDREQUEST_AMOUNT = new BigDecimal("500.0000");  //系统规定最小借款金额
+    public static final BigDecimal MIN_CURRENT_RATE = new BigDecimal("5.0000");  //系统规定最小借款利率
+    public static final BigDecimal MAX_CURRENT_RATE = new BigDecimal("20.0000");  //系统规定最大借款利率
+
+
 
 
 }

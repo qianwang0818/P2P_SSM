@@ -11,4 +11,9 @@ public interface IBidRequestService {
 
     void update(BidRequest bidRequest);
 
+    /**检查用户是否达成借款的前置条件,如果有条件不满足就抛出异常*/
+    void checkBidRequestPrecondition(Long logininfoId) throws RuntimeException;
+
+    /**提交申请借款*/
+    void apply(BidRequest form) throws RuntimeException;
 }

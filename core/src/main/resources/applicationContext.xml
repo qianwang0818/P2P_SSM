@@ -59,7 +59,7 @@
 
 	<!--7.扫描并注册mapper接口-->
 	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-		<property name="basePackage" value="com.xmg.p2p" />
+		<property name="basePackage" value="com.xmg.p2p.base.mapper,com.xmg.p2p.business.mapper" />
 		<!--有多个数据库时才有必要配置,指定sqlSessionFactory-->
 		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
 	</bean>
