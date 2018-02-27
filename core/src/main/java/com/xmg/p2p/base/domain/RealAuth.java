@@ -1,12 +1,9 @@
 package com.xmg.p2p.base.domain;
 
 import com.alibaba.fastjson.JSONObject;
-import com.xmg.p2p.base.config.MyConfig;
+import com.xmg.p2p.config.MyConfig;
 import lombok.Data;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 

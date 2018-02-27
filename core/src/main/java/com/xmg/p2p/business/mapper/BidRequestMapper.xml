@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xmg.p2p.business.mapper.BidRequestMapper">
+
+  <resultMap id="BaseResultMap" type="com.xmg.p2p.business.domain.BidRequest">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="version" jdbcType="INTEGER" property="version" />
+    <result column="returnType" jdbcType="TINYINT" property="returnType" />
+    <result column="bidRequestType" jdbcType="TINYINT" property="bidRequestType" />
+    <result column="bidRequestState" jdbcType="TINYINT" property="bidRequestState" />
+    <result column="bidRequestAmount" jdbcType="DECIMAL" property="bidRequestAmount" />
+    <result column="currentRate" jdbcType="DECIMAL" property="currentRate" />
+    <result column="monthes2Return" jdbcType="TINYINT" property="monthes2Return" />
+    <result column="bidCount" jdbcType="INTEGER" property="bidCount" />
+    <result column="totalRewardAmount" jdbcType="DECIMAL" property="totalRewardAmount" />
+    <result column="currentSum" jdbcType="DECIMAL" property="currentSum" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+    <result column="note" jdbcType="VARCHAR" property="note" />
+    <result column="disableDate" jdbcType="TIMESTAMP" property="disableDate" />
+    <result column="disableDays" jdbcType="TINYINT" property="disableDays" />
+    <result column="minBidAmount" jdbcType="DECIMAL" property="minBidAmount" />
+    <result column="applyTime" jdbcType="TIMESTAMP" property="applyTime" />
+    <result column="publishTime" jdbcType="TIMESTAMP" property="publishTime" />
+
+    <association columnPrefix="l_" javaType="com.xmg.p2p.base.domain.Logininfo" property="createUser">
+      <id column="id" property="id" />
+      <result column="username" property="username" />
+    </association>
+    <collection column="id" property="bids" select="com.xmg.p2p.business.mapper.BidMapper.selectByBidRequest">
+    </collection>
+  </resultMap>
+  
+  <insert id="insert" keyProperty="id" parameterType="com.xmg.p2p.business.domain.BidRequest" useGeneratedKeys="true">
+    insert into `bidrequest` (version, returnType, bidRequestType, 
+      bidRequestState, bidRequestAmount, currentRate, 
+      monthes2Return, bidCount, totalRewardAmount, 
+      currentSum, title, description, 
+      note, disableDate, createUser_id, 
+      disableDays, minBidAmount, applyTime, 
+      publishTime)
+    values ( 0 , #{returnType,jdbcType=TINYINT}, #{bidRequestType,jdbcType=TINYINT},
+      #{bidRequestState,jdbcType=TINYINT}, #{bidRequestAmount,jdbcType=DECIMAL}, #{currentRate,jdbcType=DECIMAL}, 
+      #{monthes2Return,jdbcType=TINYINT}, #{bidCount,jdbcType=INTEGER}, #{totalRewardAmount,jdbcType=DECIMAL}, 
+      #{currentSum,jdbcType=DECIMAL}, #{title,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, 
+      #{note,jdbcType=VARCHAR}, #{disableDate,jdbcType=TIMESTAMP}, #{createUser.id,jdbcType=BIGINT}, 
+      #{disableDays,jdbcType=TINYINT}, #{minBidAmount,jdbcType=DECIMAL}, #{applyTime,jdbcType=TIMESTAMP}, 
+      #{publishTime,jdbcType=TIMESTAMP})
+  </insert>
+
+  <update id="updateByPrimaryKey" parameterType="com.xmg.p2p.business.domain.BidRequest">
+    update `bidrequest`
+    set version = version + 1 ,
+    returnType = #{returnType,jdbcType=TINYINT},
+    bidRequestType = #{bidRequestType,jdbcType=TINYINT},
+    bidRequestState = #{bidRequestState,jdbcType=TINYINT},
+    bidRequestAmount = #{bidRequestAmount,jdbcType=DECIMAL},
+    currentRate = #{currentRate,jdbcType=DECIMAL},
+    monthes2Return = #{monthes2Return,jdbcType=TINYINT},
+    bidCount = #{bidCount,jdbcType=INTEGER},
+    totalRewardAmount = #{totalRewardAmount,jdbcType=DECIMAL},
+    currentSum = #{currentSum,jdbcType=DECIMAL},
+    title = #{title,jdbcType=VARCHAR},
+    description = #{description,jdbcType=VARCHAR},
+    note = #{note,jdbcType=VARCHAR},
+    disableDate = #{disableDate,jdbcType=TIMESTAMP},
+    createUser_id = #{createUser.id,jdbcType=BIGINT},
+    disableDays = #{disableDays,jdbcType=TINYINT},
+    minBidAmount = #{minBidAmount,jdbcType=DECIMAL},
+    applyTime = #{applyTime,jdbcType=TIMESTAMP},
+    publishTime = #{publishTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+    and version = #{version}
+  </update>
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select b.id, b.version, b.returnType, b.bidRequestType, b.bidRequestState, b.bidRequestAmount,
+    b.currentRate, b.monthes2Return, b.bidCount, b.totalRewardAmount, b.currentSum, b.title, b.description,
+    b.note, b.disableDate, b.createUser_id, b.disableDays, b.minBidAmount, b.applyTime, b.publishTime
+    from `bidrequest` as b
+    join logininfo as l on b.createUser_id = l.id
+    where b.id = #{id,jdbcType=BIGINT}
+  </select>
+  
+</mapper>

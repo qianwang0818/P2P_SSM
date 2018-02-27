@@ -1,4 +1,4 @@
-package com.xmg.p2p.base.config;
+package com.xmg.p2p.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -17,4 +17,5 @@ public class MyConfig {
     public void setWebsiteHost(String websiteHost) {
         MyConfig.websiteHost = websiteHost;
     }
+
 }

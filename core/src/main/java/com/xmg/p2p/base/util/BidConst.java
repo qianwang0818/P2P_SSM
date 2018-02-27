@@ -39,4 +39,6 @@ public class BidConst {
     /**基本风控认证分数,可借款的及格分*/
     public static final int BASE_AUTH_SCORE = 30;
 
+
+
 }

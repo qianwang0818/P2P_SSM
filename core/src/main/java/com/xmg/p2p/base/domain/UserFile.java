@@ -1,7 +1,7 @@
 package com.xmg.p2p.base.domain;
 
 import com.alibaba.fastjson.JSONObject;
-import com.xmg.p2p.base.config.MyConfig;
+import com.xmg.p2p.config.MyConfig;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

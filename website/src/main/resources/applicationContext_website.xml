@@ -33,6 +33,7 @@
 		<!-- 配置freemarker寻找模板的路径 -->
 		<property name="templateLoaderPath" value="/WEB-INF/views/" />
 	</bean>
+
 	<!--freemarker视图解析器 -->
 	<bean id="viewResolver" class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
 		<!-- 是否自动把session中的attribute导入进model,在页面中可以取到session中的内容 -->
