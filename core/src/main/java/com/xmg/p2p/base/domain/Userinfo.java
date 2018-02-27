@@ -26,6 +26,7 @@ public class Userinfo extends BaseDomain {
     private SystemDictionaryItem educationBackground;   //学历
     private SystemDictionaryItem houseCondition;   //住房条件
 
+
     public void addState(long state){
         this.bitState = BitStatesUtils.addState(this.bitState, state);
     }
@@ -52,6 +53,10 @@ public class Userinfo extends BaseDomain {
 
     public boolean isVideoAuth() {
         return BitStatesUtils.hasState(bitState,BitStatesUtils.OP_VEDIO_AUTH);
+    }
+
+    public void addScore(int add){
+        this.score += add;
     }
 
 }

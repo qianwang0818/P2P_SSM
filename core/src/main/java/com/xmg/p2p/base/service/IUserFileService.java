@@ -1,6 +1,8 @@
 package com.xmg.p2p.base.service;
 
 import com.xmg.p2p.base.domain.UserFile;
+import com.xmg.p2p.base.query.PageResult;
+import com.xmg.p2p.base.query.UserFileQueryObject;
 
 import java.util.List;
 
@@ -20,5 +22,8 @@ public interface IUserFileService {
 
     void batchUpdateFileType(Long[] ids, Long[] fileTypes);
 
+    PageResult query(UserFileQueryObject qo);
 
+    /**审核风控材料*/
+    void audit(UserFile form);
 }

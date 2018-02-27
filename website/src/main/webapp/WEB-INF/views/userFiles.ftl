@@ -66,7 +66,7 @@
 					  <#list userFiles as userFile>
 					  <div class="col-sm-6 col-md-4">
 					    <div class="thumbnail">
-					      <img src="${userFile.file}" />
+					      <img src="${userFile.file}" style="height: 142.13px" />
 					      <div class="caption">
 					        <h4>${userFile.fileType.title}</h4>
 					        <p>得分：${userFile.score} &nbsp;&nbsp;状态：${userFile.stateDisplay}</p>

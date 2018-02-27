@@ -39,6 +39,12 @@ public class PageResult {
 		return totalPage == 0 ? 1 : totalPage;
 	}
 
+	/**
+	 * @param listData
+	 * @param totalCount
+	 * @param currentPage
+	 * @param pageSize
+	 */
 	public PageResult(List listData, Integer totalCount, Integer currentPage, Integer pageSize) {
 		this.listData = listData;
 		this.totalCount = totalCount;

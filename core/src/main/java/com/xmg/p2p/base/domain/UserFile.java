@@ -1,10 +1,14 @@
 package com.xmg.p2p.base.domain;
 
+import com.alibaba.fastjson.JSONObject;
+import com.xmg.p2p.base.config.MyConfig;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 风控材料
@@ -25,5 +29,17 @@ public class UserFile extends BaseAuditDomain {
         this.applyTime = applyTime;
         this.file = file;
         this.state = state;
+    }
+
+    public String getJsonString(){
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("id",id);
+        map.put("applier",applier.getUsername());
+        map.put("fileType",this.fileType.getTitle());
+        String prefix = MyConfig.websiteHost;
+        map.put("file",prefix + file);
+        map.put("score",score);
+        map.put("remark",remark);
+        return JSONObject.toJSONString(map);
     }
 }

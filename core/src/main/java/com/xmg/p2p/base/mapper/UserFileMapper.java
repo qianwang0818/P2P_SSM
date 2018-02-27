@@ -1,6 +1,7 @@
 package com.xmg.p2p.base.mapper;
 
 import com.xmg.p2p.base.domain.UserFile;
+import com.xmg.p2p.base.query.UserFileQueryObject;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -20,5 +21,12 @@ public interface UserFileMapper {
      * @param hasType 是否已选择风控材料类型
      */
     List<UserFile> selectFilesByApplierIdAndHasType(@Param("applierId") Long applierId, @Param("hasType") boolean hasType);
+
+    /**分页条件查询总记录数*/
+    int queryForCount(UserFileQueryObject qo);
+
+    /**分页条件查询数据list*/
+    List<UserFile> query(UserFileQueryObject qo);
+
 
 }

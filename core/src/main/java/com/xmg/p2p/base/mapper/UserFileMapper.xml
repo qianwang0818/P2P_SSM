@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.xmg.p2p.base.mapper.UserFileMapper" >
 
-  <resultMap id="BaseResultMap" type="com.xmg.p2p.base.domain.UserFile" >
+  <resultMap id="SimpleResultMap" type="com.xmg.p2p.base.domain.UserFile" >
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="file" property="file" jdbcType="VARCHAR" />
     <result column="state" property="state" jdbcType="TINYINT" />
@@ -10,25 +10,41 @@
     <result column="remark" property="remark" jdbcType="VARCHAR" />
     <result column="applyTime" property="applyTime" jdbcType="TIMESTAMP" />
     <result column="auditTime" property="auditTime" jdbcType="TIMESTAMP" />
-    <association property="applier" javaType="com.xmg.p2p.base.domain.Logininfo" columnPrefix="ap_">
-      <id column="id" property="id"/>
-      <result column="username" property="username"/>
-    </association>
   </resultMap>
 
-  <resultMap id="UserListResultMap" type="com.xmg.p2p.base.domain.UserFile" >
-    <id column="id" property="id" jdbcType="BIGINT" />
-    <result column="file" property="file" jdbcType="VARCHAR" />
-    <result column="state" property="state" jdbcType="TINYINT" />
-    <result column="score" property="score" jdbcType="TINYINT" />
-    <result column="remark" property="remark" jdbcType="VARCHAR" />
-    <result column="applyTime" property="applyTime" jdbcType="TIMESTAMP" />
-    <result column="auditTime" property="auditTime" jdbcType="TIMESTAMP" />
+  <resultMap id="UserListResultMap" type="com.xmg.p2p.base.domain.UserFile" extends="SimpleResultMap" >
     <association property="fileType" javaType="com.xmg.p2p.base.domain.SystemDictionaryItem" columnPrefix="sd_">
       <id column="id" property="id"/>
       <result column="title" property="title"/>
     </association>
   </resultMap>
+
+  <resultMap id="BaseResultMap" type="com.xmg.p2p.base.domain.UserFile" extends="SimpleResultMap" >
+    <association property="applier" javaType="com.xmg.p2p.base.domain.Logininfo" columnPrefix="ap_">
+      <id column="id" property="id"/>
+      <result column="username" property="username"/>
+    </association>
+    <association property="fileType" javaType="com.xmg.p2p.base.domain.SystemDictionaryItem" columnPrefix="sd_">
+      <id column="id" property="id"/>
+      <result column="title" property="title"/>
+    </association>
+  </resultMap>
+
+  <resultMap id="FullResultMap" type="com.xmg.p2p.base.domain.UserFile" extends="SimpleResultMap" >
+    <association property="applier" javaType="com.xmg.p2p.base.domain.Logininfo" columnPrefix="ap_">
+      <id column="id" property="id"/>
+      <result column="username" property="username"/>
+    </association>
+    <association property="auditor" javaType="com.xmg.p2p.base.domain.Logininfo" columnPrefix="au_">
+      <id column="id" property="id"/>
+      <result column="username" property="username"/>
+    </association>
+    <association property="fileType" javaType="com.xmg.p2p.base.domain.SystemDictionaryItem" columnPrefix="sd_">
+      <id column="id" property="id"/>
+      <result column="title" property="title"/>
+    </association>
+  </resultMap>
+
 
 
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
@@ -59,22 +75,28 @@
     where id = #{id,jdbcType=BIGINT}
   </update>
 
+  <sql id="simple_column">
+    f.id, f.state, f.score, f.file, f.remark, f.applyTime, f.auditTime
+  </sql>
+
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
-    select f.id, f.state, f.score, f.file, f.remark, f.applyTime, f.auditTime,
-      ap.id as ap_id, ap.username as ap_username
+    select <include refid="simple_column"/> ,
+      ap.id as ap_id, ap.username as ap_username,
+      sd.id as sd_id, sd.title as sd_title
     from `userfile` f
-    join logininfo ap
-    on f.applier_id=ap.id
+    join logininfo ap on f.applier_id=ap.id
+    left join systemdictionaryitem as sd on f.fileType_id=sd.id
     where f.id = #{id,jdbcType=BIGINT}
   </select>
 
   <select id="selectAll" resultMap="BaseResultMap" >
-    select id, state, score, file, remark, applyTime, auditTime, fileType_id, applier_id, auditor_id
-    from `userfile`
+    select <include refid="simple_column"/>,
+      fileType_id, applier_id, auditor_id
+    from `userfile` as f
   </select>
 
   <select id="selectFilesByApplierIdAndHasType" resultMap="UserListResultMap">
-    select f.id, f.state, f.score, f.file, f.remark, f.applyTime, f.auditTime,
+    select <include refid="simple_column"/>,
       sd.id as sd_id, sd.title as sd_title
     from `userfile` as f
     left join systemdictionaryitem as sd
@@ -88,6 +110,44 @@
         and f.fileType_id is null
       </otherwise>
     </choose>
+  </select>
+
+  <sql id="base_where">
+    <where>
+      <if test="state>-1">
+        and f.state = #{state}
+      </if>
+      <if test="beginDate!=null">
+        <![CDATA[
+           and f.applyTime >= #{beginDate}
+        ]]>
+      </if>
+      <if test="endDate!=null">
+        <![CDATA[
+           and f.applyTime <= #{endDate}
+        ]]>
+      </if>
+    </where>
+  </sql>
+  
+  <select id="queryForCount" resultType="java.lang.Integer">
+    select count(id)
+    from userfile as f
+    <include refid="base_where"/>
+  </select>
+
+  <select id="query" resultMap="FullResultMap">
+    select <include refid="simple_column"/>,
+      ap.id as ap_id, ap.username as ap_username,
+      au.id as au_id, au.username as au_username,
+      sd.id as sd_id, sd.title as sd_title
+    from userfile as f
+    join logininfo as ap on f.applier_id = ap.id
+    left join logininfo as au on f.auditor_id = au.id
+    join systemdictionaryitem as sd on f.fileType_id = sd.id
+    <include refid="base_where"/>
+    order by f.state asc
+    limit #{start},#{pageSize}
   </select>
 
 </mapper>
