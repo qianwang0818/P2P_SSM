@@ -2,6 +2,7 @@ package com.xmg.p2p.business.service;
 
 import com.xmg.p2p.base.query.PageResult;
 import com.xmg.p2p.business.domain.BidRequest;
+import com.xmg.p2p.business.domain.BidRequestAuditHistory;
 import com.xmg.p2p.business.qo.BidRequestQueryObject;
 
 /**
@@ -21,4 +22,7 @@ public interface IBidRequestService {
 
     /**分页条件查询借款对象*/
     PageResult query(BidRequestQueryObject qo);
+
+    /**发标前审核*/
+    void publishAudit(BidRequestAuditHistory form);
 }

@@ -1,5 +1,6 @@
 package com.xmg.p2p.business.service.impl;
 
+import com.sun.org.apache.regexp.internal.RE;
 import com.xmg.p2p.base.domain.Account;
 import com.xmg.p2p.base.domain.Logininfo;
 import com.xmg.p2p.base.domain.Userinfo;
@@ -8,12 +9,16 @@ import com.xmg.p2p.base.service.IAccountService;
 import com.xmg.p2p.base.service.IUserinfoService;
 import com.xmg.p2p.base.util.BidConst;
 import com.xmg.p2p.base.util.BitStatesUtils;
+import com.xmg.p2p.base.util.DateUtil;
 import com.xmg.p2p.base.util.UserContext;
 import com.xmg.p2p.business.domain.BidRequest;
+import com.xmg.p2p.business.domain.BidRequestAuditHistory;
+import com.xmg.p2p.business.mapper.BidRequestAuditHistoryMapper;
 import com.xmg.p2p.business.mapper.BidRequestMapper;
 import com.xmg.p2p.business.qo.BidRequestQueryObject;
 import com.xmg.p2p.business.service.IBidRequestService;
 import com.xmg.p2p.business.util.CalculatetUtil;
+import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,6 +42,10 @@ public class BidRequestServiceImpl implements IBidRequestService {
 
     @Autowired
     private IAccountService accountService;
+
+    @Autowired
+    private BidRequestAuditHistoryMapper bidRequestAuditHistoryMapper;
+
 
     @Override
     public void update(BidRequest bidRequest) {
@@ -119,6 +128,7 @@ public class BidRequestServiceImpl implements IBidRequestService {
         userinfoService.update(userinfo);
     }
 
+    /**分页条件查询待审核借款对象*/
     @Override
     public PageResult query(BidRequestQueryObject qo) {
         int totalCount = bidRequestMapper.queryForCount(qo);
@@ -128,6 +138,42 @@ public class BidRequestServiceImpl implements IBidRequestService {
             List<BidRequest> list = bidRequestMapper.query(qo);
             return new PageResult(list,totalCount,qo.getCurrentPage(),qo.getPageSize());
         }
+    }
+
+    /**发标前审核*/
+    @Override
+    public void publishAudit(BidRequestAuditHistory form) {
+        Long id = form.getId();
+        int state = form.getState();
+        String remark = form.getRemark();
+        //查出BidRequest
+        BidRequest bidRequest = bidRequestMapper.selectByPrimaryKey(id);
+        if(bidRequest==null){
+            throw new RuntimeException("该标的不存在!");
+        }
+        //判断借款对象处于待审核状态
+        if(bidRequest.getBidRequestState()!=BidConst.BIDREQUEST_STATE_PUBLISH_PENDING){
+            throw new RuntimeException("该标的已被审核,请勿重复审核!");
+        }
+        //创建一个审核历史对象,填充数据,保存
+        BidRequestAuditHistory history = new BidRequestAuditHistory(id,bidRequest.getCreateUser(),
+                bidRequest.getApplyTime(),UserContext.getCurrent(),new Date(),BidRequestAuditHistory.PUBLISH_AUDIT, remark, state);
+        bidRequestAuditHistoryMapper.insert(history);
+        //判断审核结果(通过or拒绝),
+        if(state == BidRequestAuditHistory.STATE_AUDIT){    //审核通过,修改借款对象状态,设置招标截止日期disableDate,设置审核意见remark
+            bidRequest.setBidRequestState(BidConst.BIDREQUEST_STATE_BIDDING);   //设为招标中
+            bidRequest.setDisableDate(DateUtils.addDays(new Date(),bidRequest.getDisableDays()));
+            bidRequest.setNote(remark);
+        }else if(state == BidRequestAuditHistory.STATE_REJECT){ //审核拒绝,修改bidRequest借款对象状态,去除userinfo有标待审的状态码并更新
+            bidRequest.setBidRequestState(BidConst.BIDREQUEST_STATE_PUBLISH_REFUSE);   //设为被拒绝
+            Userinfo applier = userinfoService.get(bidRequest.getCreateUser().getId());
+            applier.removeState(BitStatesUtils.OP_HAS_BIDREQUEST_PROCESS);
+            userinfoService.update(applier);    //更新用户有标在筹的状态码
+        }else{      //如果前台传过来的值通过也不是拒绝
+            throw new RuntimeException("该审核结果未定义,若重试无效,请联系运维!");
+        }
+        //更新bidRequest
+        this.update(bidRequest);
     }
 
 }
