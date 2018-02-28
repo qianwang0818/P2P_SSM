@@ -127,6 +127,9 @@
            and f.applyTime <= #{endDate}
         ]]>
       </if>
+      <if test="applierId!=null">
+        and f.applier_id = #{applierId}
+      </if>
     </where>
   </sql>
   
@@ -147,7 +150,9 @@
     join systemdictionaryitem as sd on f.fileType_id = sd.id
     <include refid="base_where"/>
     order by f.state asc
-    limit #{start},#{pageSize}
+    <if test="pageSize>0">
+      limit #{start},#{pageSize}
+    </if>
   </select>
 
 </mapper>

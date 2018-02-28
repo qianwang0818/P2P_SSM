@@ -24,6 +24,8 @@ public interface IUserFileService {
 
     PageResult query(UserFileQueryObject qo);
 
+    List<UserFile> queryForList(UserFileQueryObject qo);
+
     /**审核风控材料*/
     void audit(UserFile form);
 }

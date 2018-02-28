@@ -29,6 +29,13 @@
 					size:'xs',
 					beforeDateTime:"${bidRequest.disableDate?string('yyyy-MM-dd HH:mm:ss')}"
 				});
+
+				$(".more").click(function(){
+                    $("#fileImg").attr("src","");
+                    var json=$(this).data("json");
+                    $("#fileImg").attr("src",json);
+					$("#fileModal").modal("show");
+				})
 			});
 		</script>
 	</head>
@@ -52,15 +59,15 @@
 										<a class="text-info" href="#">${bidRequest.createUser.username}</a>
 									</p><br />
 									<div>
-									 	籍贯： XX - OO
+									 	籍贯： 广东 - 深圳
 									 </div>
 									 <div>
 									 	认证信息：
 									 		<label class="label label-success">
-								 			<#if userInfo.isRealAuth>
+								 			<#if userinfo.isRealAuth()>
 									 			<span class="glyphicon glyphicon-user"></span>
 									 		</#if>
-									 		<#if userInfo.isVedioAuth>
+									 		<#if userinfo.isVideoAuth()>
 									 			<span class="glyphicon glyphicon-eye-open"></span>
 									 		</#if>
 									 		</label>
@@ -204,7 +211,7 @@
 										</td>
 										<td class="muted text-right" width="140px;">生日</td>
 										<td width="150px;" style="padding-left: 10px;" class="text-info">
-											${realAuth.bornDate}
+											${realAuth.birthDate}
 										</td>
 										<td class="muted text-right" width="140px;">身份证号码</td>
 										<td width="150px;" style="padding-left: 10px;" class="text-info">
@@ -216,9 +223,9 @@
 										</td>
 									</tr>
 									<tr>
-										<td class="muted text-right" width="140px;">注册时间</td>
+										<td class="muted text-right" width="140px;">申请时间</td>
 										<td width="150px;" style="padding-left: 10px;" class="text-info">
-											
+											${bidRequest.applyTime?string("yyyy-MM-dd")}
 										</td>
 										<td class="muted text-right" width="140px;">借款额度</td>
 										<td width="150px;" style="padding-left: 10px;" class="text-info">
@@ -230,25 +237,25 @@
 										</td>
 										<td class="muted text-right" width="140px;">住房条件</td>
 										<td width="150px;" style="padding-left: 10px;" class="text-info">
-											${userInfo.houseCondition.title}
+											${userinfo.houseCondition.title}
 										</td>
 									</tr>
 									<tr>
 										<td class="muted text-right">文化程度</td>
 										<td style="padding-left: 10px;" class="text-info">
-											${userInfo.educationBackground.title}
+											${userinfo.educationBackground.title}
 										</td>
 										<td class="muted text-right">每月收入</td>
 										<td style="padding-left: 10px;" class="text-info">
-											${userInfo.incomeGrade.title}
+											${userinfo.incomeGrade.title}
 										</td>
 										<td class="muted text-right">婚姻情况</td>
 										<td style="padding-left: 10px;" class="text-info">
-											${userInfo.marriage.title}
+											${userinfo.marriage.title}
 										</td>
 										<td class="muted text-right">子女情况</td>
 										<td style="padding-left: 10px;" class="text-info">
-											${userInfo.kidCount.title}
+											${userinfo.kidCount.title}
 										</td>
 									</tr>
 								</tbody>
@@ -265,14 +272,14 @@
 								<thead>
 									<tr>
 										<th>材料类型</th>
-										<th>材料数量</th>
+										<th>材料预览</th>
 									</tr>
 								</thead>
 								<tbody>
-									<#list userFiles as file>
-							    	<tr style="cursor: pointer;" lid="2101" st="1" class="more">
-								        <th>${file.fileType.title}</th>
-								        <td>1</td>
+									<#list userFiles as userFile>
+							    	<tr style="cursor: pointer;" lid="2101" st="1" data-json="${websiteHost}${userFile.file}" class="more">
+								        <th>${userFile.fileType.title}</th>
+								        <td><img src="${websiteHost}${userFile.file}" style="height: 100px"></td>
 								    </tr>
 									</#list>
 								</tbody>
@@ -379,6 +386,21 @@
 					
 				</div>
 			</div>
+
+			<#--显示风控材料大图模态框-->
+            <div class="modal fade" id="fileModal" tabindex="-1" role="dialog" >
+                <div class="modal-dialog modal-lg" role="document" style="width: 1100px">
+                    <div class="modal-content">
+                        <div class="modal-body">
+							<img id="fileImg" src="" alt="" style="height: 600px"/>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
 		</div>
 	</body>
 </html>

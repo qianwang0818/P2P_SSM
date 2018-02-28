@@ -34,4 +34,18 @@ public class BidRequestAuditHistory extends BaseAuditDomain {
         this.remark = remark;
         this.state = state;
     }
+
+    public String getAuditTypeDisplay(){
+        switch (auditType){
+            case PUBLISH_AUDIT:
+                return "发标前审核";
+            case FULL_AUDIT_1:
+                return "满标一审";
+            case FULL_AUDIT_2:
+                return "满标二审";
+            default:
+                return "";
+        }
+    }
+
 }

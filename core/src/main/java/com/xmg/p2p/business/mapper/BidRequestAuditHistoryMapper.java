@@ -12,4 +12,6 @@ public interface BidRequestAuditHistoryMapper {
 
     BidRequestAuditHistory selectByPrimaryKey(Long id);
 
+    List<BidRequestAuditHistory> selectByBidRequestId(Long id);
+
 }

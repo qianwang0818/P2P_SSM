@@ -5,6 +5,7 @@ import com.xmg.p2p.base.domain.BaseDomain;
 import com.xmg.p2p.base.domain.Logininfo;
 import static com.xmg.p2p.base.util.BidConst.*; //静态引入BidConst
 
+import com.xmg.p2p.business.util.DecimalFormatUtil;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -96,20 +97,14 @@ public class BidRequest extends BaseDomain {
         return JSONObject.toJSONString(json);
     }
 
+    /**计算距离满标还需金额*/
+    public BigDecimal getRemainAmount() {
+        return DecimalFormatUtil.formatBigDecimal(bidRequestAmount.subtract(currentSum), DISPLAY_SCALE);
+    }
 
-    /**计算还需金额*/
-    /*public BigDecimal getRemainAmount() {
-        return DecimalFormatUtil.formatBigDecimal(
-                bidRequestAmount.subtract(currentSum), DISPLAY_SCALE);
-    }*/
-
-    /**计算当前投标进度*/
-
-    /*public BigDecimal getPersent() {
-        return currentSum.divide(bidRequestAmount, DISPLAY_SCALE,
-                RoundingMode.HALF_UP).multiply(new BigDecimal("100"));
-    }*/
-
-
+    /**计算当前投标进度百分比*/
+    public BigDecimal getPersent() {
+        return currentSum.divide(bidRequestAmount, DISPLAY_SCALE,RoundingMode.HALF_UP).multiply(new BigDecimal("100"));
+    }
 
 }

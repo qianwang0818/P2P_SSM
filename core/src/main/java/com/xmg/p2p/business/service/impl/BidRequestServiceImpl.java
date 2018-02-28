@@ -48,6 +48,11 @@ public class BidRequestServiceImpl implements IBidRequestService {
 
 
     @Override
+    public BidRequest get(Long id) {
+        return bidRequestMapper.selectByPrimaryKey(id);
+    }
+
+    @Override
     public void update(BidRequest bidRequest) {
         int ret = bidRequestMapper.updateByPrimaryKey(bidRequest);
         if (ret==0){
@@ -174,6 +179,11 @@ public class BidRequestServiceImpl implements IBidRequestService {
         }
         //更新bidRequest
         this.update(bidRequest);
+    }
+
+    @Override
+    public List<BidRequestAuditHistory> selectAuditHistoryByBidRequestId(Long bidRequestId) {
+        return bidRequestAuditHistoryMapper.selectByBidRequestId(bidRequestId);
     }
 
 }

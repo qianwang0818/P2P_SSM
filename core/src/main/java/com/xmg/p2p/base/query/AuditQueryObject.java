@@ -40,4 +40,6 @@ abstract public class AuditQueryObject extends QueryObject {
         return endDate==null ? null : DateUtil.endOfDay(endDate);
     }
 
+
+
 }

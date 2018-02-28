@@ -67,6 +67,11 @@ public class UserFileServiceImpl implements IUserFileService {
         }
     }
 
+    @Override
+    public List<UserFile> queryForList(UserFileQueryObject qo) {
+        return userFileMapper.query(qo);
+    }
+
     /**审核风控材料*/
     @Override
     public void audit(UserFile form) {

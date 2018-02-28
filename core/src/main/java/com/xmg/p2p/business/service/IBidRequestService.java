@@ -5,12 +5,17 @@ import com.xmg.p2p.business.domain.BidRequest;
 import com.xmg.p2p.business.domain.BidRequestAuditHistory;
 import com.xmg.p2p.business.qo.BidRequestQueryObject;
 
+import java.util.List;
+
 /**
  * 借款对象相关服务接口
  * @Author: Squalo
  * @Date: 2018/2/27 - 18:38     day08_01
  */
 public interface IBidRequestService {
+
+    /**根据主键id查询*/
+    BidRequest get(Long id);
 
     void update(BidRequest bidRequest);
 
@@ -25,4 +30,8 @@ public interface IBidRequestService {
 
     /**发标前审核*/
     void publishAudit(BidRequestAuditHistory form);
+
+    /**根据一个标的查询其对应的审核历史*/
+    List<BidRequestAuditHistory> selectAuditHistoryByBidRequestId(Long bidRequestId);
+
 }
