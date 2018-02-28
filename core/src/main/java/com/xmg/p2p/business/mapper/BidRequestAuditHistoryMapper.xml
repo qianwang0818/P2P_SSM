@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xmg.p2p.business.mapper.BidRequestAuditHistoryMapper" >
+
+  <resultMap id="BaseResultMap" type="com.xmg.p2p.business.domain.BidRequestAuditHistory" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="state" property="state" jdbcType="TINYINT" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="auditTime" property="auditTime" jdbcType="TIMESTAMP" />
+    <result column="applyTime" property="applyTime" jdbcType="TIMESTAMP" />
+    <result column="bidRequestId" property="bidRequestId" jdbcType="BIGINT" />
+    <result column="auditType" property="auditType" jdbcType="TINYINT" />
+
+    <association property="applier" javaType="com.xmg.p2p.base.domain.Logininfo" columnPrefix="ap_">
+      <id property="id" column="id"/>
+      <result property="username" column="username"/>
+    </association>
+    <association property="auditor" javaType="com.xmg.p2p.base.domain.Logininfo" columnPrefix="au_">
+      <id property="id" column="id"/>
+      <result property="username" column="username"/>
+    </association>
+  </resultMap>
+
+  <insert id="insert" parameterType="com.xmg.p2p.business.domain.BidRequestAuditHistory" useGeneratedKeys="true" keyProperty="id" >
+    insert into `bidrequestaudithistory` (state, remark, auditTime, 
+      applyTime, auditor_id, applier_id, 
+      bidRequestId, auditType)
+    values (#{state,jdbcType=TINYINT}, #{remark,jdbcType=VARCHAR}, #{auditTime,jdbcType=TIMESTAMP}, 
+      #{applyTime,jdbcType=TIMESTAMP}, #{auditor.id,jdbcType=BIGINT}, #{applier.id,jdbcType=BIGINT}, 
+      #{bidRequestId,jdbcType=BIGINT}, #{auditType,jdbcType=TINYINT})
+  </insert>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select h.id, h.state, h.remark, h.auditTime, h.applyTime, h.bidRequestId, h.auditType,
+      ap.id as ap_id, ap.username as ap_username, au.id as au_id, au.username as au_username
+    from `bidrequestaudithistory` as h
+    join logininfo as ap on h.applier_id=ap.id
+    join logininfo as au on h.auditor_id=au.id
+    where h.id = #{id,jdbcType=BIGINT}
+  </select>
+
+</mapper>
