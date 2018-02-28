@@ -1,6 +1,8 @@
 package com.xmg.p2p.business.service;
 
+import com.xmg.p2p.base.query.PageResult;
 import com.xmg.p2p.business.domain.BidRequest;
+import com.xmg.p2p.business.qo.BidRequestQueryObject;
 
 /**
  * 借款对象相关服务接口
@@ -16,4 +18,7 @@ public interface IBidRequestService {
 
     /**提交申请借款*/
     void apply(BidRequest form) throws RuntimeException;
+
+    /**分页条件查询借款对象*/
+    PageResult query(BidRequestQueryObject qo);
 }

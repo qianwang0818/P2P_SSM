@@ -51,8 +51,8 @@ public class BidConst {
     public final static int BIDREQUEST_STATE_BIDDING = 1;                //招标中
     public final static int BIDREQUEST_STATE_UNDO = 2;                   //已撤销
     public final static int BIDREQUEST_STATE_BIDDING_OVERDUE = 3;       //流标
-    public final static int BIDREQUEST_STATE_APPROVE_PENGDING_1 = 4;   //满标一审
-    public final static int BIDREQUEST_STATE_APPROVE_PENGDING_2 = 5;   //满标二审
+    public final static int BIDREQUEST_STATE_APPROVE_PENDING_1 = 4;   //满标一审
+    public final static int BIDREQUEST_STATE_APPROVE_PENDING_2 = 5;   //满标二审
     public final static int BIDREQUEST_STATE_REJECTED = 6;              //满标审核被拒绝
     public final static int BIDREQUEST_STATE_PAYING_BACK = 7;           //还款中
     public final static int BIDREQUEST_STATE_COMPLETE_PAY_BACK = 8;    //已还清

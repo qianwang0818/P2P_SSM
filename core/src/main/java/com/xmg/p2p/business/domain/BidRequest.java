@@ -3,7 +3,8 @@ package com.xmg.p2p.business.domain;
 import com.alibaba.fastjson.JSONObject;
 import com.xmg.p2p.base.domain.BaseDomain;
 import com.xmg.p2p.base.domain.Logininfo;
-import com.xmg.p2p.base.util.BidConst;
+import static com.xmg.p2p.base.util.BidConst.*; //静态引入BidConst
+
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -12,8 +13,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static com.xmg.p2p.base.util.BidConst.ZERO;
 
 /**
  * 借款对象
@@ -33,7 +32,7 @@ public class BidRequest extends BaseDomain {
     private int monthes2Return;                       // 还款月数
     private int bidCount = 0;                          // 已投标次数(冗余)
     private BigDecimal totalRewardAmount;             // 总回报金额(总利息)
-    private BigDecimal currentSum = BidConst.ZERO;    // 当前已投标总金额
+    private BigDecimal currentSum = ZERO;    // 当前已投标总金额
     private String title;                              // 借款标题
     private String description;                       // 借款描述
     private String note;                               // 风控意见
@@ -44,37 +43,8 @@ public class BidRequest extends BaseDomain {
     private Date applyTime;                           // 申请时间
     private Date publishTime;                         // 发标时间
 
-    /**计算当前投标进度*/
-    /*public BigDecimal getPersent() {
-        return currentSum.divide(bidRequestAmount, BidConst.DISPLAY_SCALE,
-                RoundingMode.HALF_UP).multiply(new BigDecimal("100"));
-    }*/
-
-    /**计算还需金额*/
-    /*public BigDecimal getRemainAmount() {
-        return DecimalFormatUtil.formatBigDecimal(
-                bidRequestAmount.subtract(currentSum), BidConst.DISPLAY_SCALE);
-    }*/
-
-   /* public String getJsonString() {
-        Map<String, Object> json = new HashMap<>();
-        json.put("id", id);
-        json.put("username", this.createUser.getUsername());
-        json.put("title", title);
-        json.put("bidRequestAmount", bidRequestAmount);
-        json.put("currentRate", currentRate);
-        json.put("monthes2Return", monthes2Return);
-        json.put("returnType", getReturnTypeDisplay());
-        json.put("totalRewardAmount", totalRewardAmount);
-        return JSONObject.toJSONString(json);
-    }*/
-
-    /*public String getReturnTypeDisplay() {
-        return returnType == BidConst.RETURN_TYPE_MONTH_INTEREST ? "按月到期"
-                : "等额本息";
-    }*/
-
-    /*public String getBidRequestStateDisplay() {
+    /**day08_03*/
+    public String getBidRequestStateDisplay() {
         switch (this.bidRequestState) {
             case BIDREQUEST_STATE_PUBLISH_PENDING:
                 return "待发布";
@@ -101,5 +71,45 @@ public class BidRequest extends BaseDomain {
             default:
                 return "";
         }
+    }
+
+    public String getReturnTypeDisplay() {
+        if(this.returnType==RETURN_TYPE_MONTH_INTEREST){
+            return  "按月到期";
+        }else if(this.returnType==RETURN_TYPE_MONTH_INTEREST_PRINCIPAL){
+            return  "等额本息";
+        }else {
+            return "";
+        }
+    }
+
+    public String getJsonString() {
+        Map<String, Object> json = new HashMap<>();
+        json.put("id", id);
+        json.put("username", this.createUser.getUsername());
+        json.put("title", title);
+        json.put("bidRequestAmount", bidRequestAmount);
+        json.put("currentRate", currentRate);
+        json.put("monthes2Return", monthes2Return);
+        json.put("returnType", this.getReturnTypeDisplay());
+        json.put("totalRewardAmount", totalRewardAmount);
+        return JSONObject.toJSONString(json);
+    }
+
+
+    /**计算还需金额*/
+    /*public BigDecimal getRemainAmount() {
+        return DecimalFormatUtil.formatBigDecimal(
+                bidRequestAmount.subtract(currentSum), DISPLAY_SCALE);
     }*/
+
+    /**计算当前投标进度*/
+
+    /*public BigDecimal getPersent() {
+        return currentSum.divide(bidRequestAmount, DISPLAY_SCALE,
+                RoundingMode.HALF_UP).multiply(new BigDecimal("100"));
+    }*/
+
+
+
 }

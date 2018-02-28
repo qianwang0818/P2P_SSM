@@ -27,8 +27,7 @@
       <id column="id" property="id" />
       <result column="username" property="username" />
     </association>
-    <collection column="id" property="bids" select="com.xmg.p2p.business.mapper.BidMapper.selectByBidRequest">
-    </collection>
+    <collection column="id" property="bids" select="com.xmg.p2p.business.mapper.BidMapper.selectByBidRequest"/>
   </resultMap>
   
   <insert id="insert" keyProperty="id" parameterType="com.xmg.p2p.business.domain.BidRequest" useGeneratedKeys="true">
@@ -73,13 +72,40 @@
     and version = #{version}
   </update>
 
-  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select b.id, b.version, b.returnType, b.bidRequestType, b.bidRequestState, b.bidRequestAmount,
+  <sql id="base_column">
+    b.id, b.version, b.returnType, b.bidRequestType, b.bidRequestState, b.bidRequestAmount,
     b.currentRate, b.monthes2Return, b.bidCount, b.totalRewardAmount, b.currentSum, b.title, b.description,
-    b.note, b.disableDate, b.createUser_id, b.disableDays, b.minBidAmount, b.applyTime, b.publishTime
+    b.note, b.disableDate, b.disableDays, b.minBidAmount, b.applyTime, b.publishTime,
+    l.id as l_id, l.username as l_username
+  </sql>
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select <include refid="base_column"/>
     from `bidrequest` as b
     join logininfo as l on b.createUser_id = l.id
     where b.id = #{id,jdbcType=BIGINT}
   </select>
-  
+
+  <sql id="base_where">
+    <where>
+      <if test="bidRequestState>-1">
+        and b.bidRequestState = #{bidRequestState}
+      </if>
+    </where>
+  </sql>
+
+  <select id="queryForCount" resultType="int" parameterType="bidRequestQueryObject">
+    select count(b.id)
+    from bidrequest as b
+    <include refid="base_where"/>
+  </select>
+
+  <select id="query" resultMap="BaseResultMap" parameterType="bidRequestQueryObject">
+    select <include refid="base_column"/>
+    from `bidrequest` as b
+    join logininfo as l on b.createUser_id = l.id
+    <include refid="base_where"/>
+    limit #{start},#{pageSize}
+  </select>
+
 </mapper>

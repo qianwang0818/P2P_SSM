@@ -3,6 +3,7 @@ package com.xmg.p2p.business.service.impl;
 import com.xmg.p2p.base.domain.Account;
 import com.xmg.p2p.base.domain.Logininfo;
 import com.xmg.p2p.base.domain.Userinfo;
+import com.xmg.p2p.base.query.PageResult;
 import com.xmg.p2p.base.service.IAccountService;
 import com.xmg.p2p.base.service.IUserinfoService;
 import com.xmg.p2p.base.util.BidConst;
@@ -10,6 +11,7 @@ import com.xmg.p2p.base.util.BitStatesUtils;
 import com.xmg.p2p.base.util.UserContext;
 import com.xmg.p2p.business.domain.BidRequest;
 import com.xmg.p2p.business.mapper.BidRequestMapper;
+import com.xmg.p2p.business.qo.BidRequestQueryObject;
 import com.xmg.p2p.business.service.IBidRequestService;
 import com.xmg.p2p.business.util.CalculatetUtil;
 import org.springframework.beans.BeanUtils;
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 /**借款对象相关服务接口
  * @Author: Squalo
@@ -114,6 +117,17 @@ public class BidRequestServiceImpl implements IBidRequestService {
         Userinfo userinfo = userinfoService.getCurrent();
         userinfo.addState(BitStatesUtils.OP_HAS_BIDREQUEST_PROCESS);
         userinfoService.update(userinfo);
+    }
+
+    @Override
+    public PageResult query(BidRequestQueryObject qo) {
+        int totalCount = bidRequestMapper.queryForCount(qo);
+        if(totalCount<=0){
+            return PageResult.empty(qo.getPageSize());
+        }else{
+            List<BidRequest> list = bidRequestMapper.query(qo);
+            return new PageResult(list,totalCount,qo.getCurrentPage(),qo.getPageSize());
+        }
     }
 
 }
