@@ -1,4 +1,4 @@
-package com.xmg.p2p.business.qo;
+package com.xmg.p2p.business.query;
 
 import com.xmg.p2p.base.query.QueryObject;
 import lombok.Data;

@@ -1,6 +1,5 @@
 package com.xmg.p2p.business.service.impl;
 
-import com.sun.org.apache.regexp.internal.RE;
 import com.xmg.p2p.base.domain.Account;
 import com.xmg.p2p.base.domain.Logininfo;
 import com.xmg.p2p.base.domain.Userinfo;
@@ -9,13 +8,12 @@ import com.xmg.p2p.base.service.IAccountService;
 import com.xmg.p2p.base.service.IUserinfoService;
 import com.xmg.p2p.base.util.BidConst;
 import com.xmg.p2p.base.util.BitStatesUtils;
-import com.xmg.p2p.base.util.DateUtil;
 import com.xmg.p2p.base.util.UserContext;
 import com.xmg.p2p.business.domain.BidRequest;
 import com.xmg.p2p.business.domain.BidRequestAuditHistory;
 import com.xmg.p2p.business.mapper.BidRequestAuditHistoryMapper;
 import com.xmg.p2p.business.mapper.BidRequestMapper;
-import com.xmg.p2p.business.qo.BidRequestQueryObject;
+import com.xmg.p2p.business.query.BidRequestQueryObject;
 import com.xmg.p2p.business.service.IBidRequestService;
 import com.xmg.p2p.business.util.CalculatetUtil;
 import org.apache.commons.lang.time.DateUtils;

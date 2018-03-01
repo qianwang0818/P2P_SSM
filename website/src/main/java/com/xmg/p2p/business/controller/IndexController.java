@@ -1,15 +1,12 @@
 package com.xmg.p2p.business.controller;
 
 import com.xmg.p2p.base.util.BidConst;
-import com.xmg.p2p.business.domain.BidRequest;
-import com.xmg.p2p.business.qo.BidRequestQueryObject;
+import com.xmg.p2p.business.query.BidRequestQueryObject;
 import com.xmg.p2p.business.service.IBidRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-
-import java.util.List;
 
 /**
  * 前台用户首页

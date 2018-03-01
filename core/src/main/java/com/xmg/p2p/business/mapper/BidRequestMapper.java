@@ -1,7 +1,7 @@
 package com.xmg.p2p.business.mapper;
 
 import com.xmg.p2p.business.domain.BidRequest;
-import com.xmg.p2p.business.qo.BidRequestQueryObject;
+import com.xmg.p2p.business.query.BidRequestQueryObject;
 
 import java.util.List;
 

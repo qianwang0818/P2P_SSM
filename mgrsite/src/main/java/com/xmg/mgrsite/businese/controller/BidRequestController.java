@@ -10,7 +10,7 @@ import com.xmg.p2p.base.util.BidConst;
 import com.xmg.p2p.base.util.JSONResult;
 import com.xmg.p2p.business.domain.BidRequest;
 import com.xmg.p2p.business.domain.BidRequestAuditHistory;
-import com.xmg.p2p.business.qo.BidRequestQueryObject;
+import com.xmg.p2p.business.query.BidRequestQueryObject;
 import com.xmg.p2p.business.service.IBidRequestService;
 import com.xmg.p2p.config.MyConfig;
 import lombok.extern.slf4j.Slf4j;

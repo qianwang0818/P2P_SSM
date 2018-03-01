@@ -37,7 +37,7 @@
 			<span>平台管理</span>
 		</a>
 		<ul class="in" id="systemmanage_detail">
-			<li class="companyBank"><a href="/companyBank_list.do">平台账号管理</a></li>
+			<li class="platformBank"><a href="/platformBankInfo_list.do">平台账号管理</a></li>
 			<li><a href="/real_auth_list.do">系统账户流水</a></li>
 			<li><a href="/bid_request_list.do"> <span>系统设置</span></a></li>
 			<li><a href="/bid_request_list.do"> <span>企业资讯</span></a></li>

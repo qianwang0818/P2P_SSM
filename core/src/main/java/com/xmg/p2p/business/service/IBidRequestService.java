@@ -3,7 +3,7 @@ package com.xmg.p2p.business.service;
 import com.xmg.p2p.base.query.PageResult;
 import com.xmg.p2p.business.domain.BidRequest;
 import com.xmg.p2p.business.domain.BidRequestAuditHistory;
-import com.xmg.p2p.business.qo.BidRequestQueryObject;
+import com.xmg.p2p.business.query.BidRequestQueryObject;
 
 import java.util.List;
 
