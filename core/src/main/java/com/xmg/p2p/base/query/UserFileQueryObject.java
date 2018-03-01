@@ -14,9 +14,16 @@ public class UserFileQueryObject extends AuditQueryObject {
 
     private Long applierId;
 
+    //BidRequestController:borrowInfo
     public UserFileQueryObject(Long applierId, int state, int pageSize) {
         this.applierId = applierId;
         this.setState(state);
         this.setPageSize(pageSize);
     }
+    //BorrowController:borrowInfo
+    public UserFileQueryObject(Long applierId, int pageSize) {
+        this.applierId = applierId;
+        this.setPageSize(pageSize);
+    }
+
 }

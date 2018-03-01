@@ -14,7 +14,7 @@ import org.springframework.web.servlet.ModelAndView;
 import java.util.Map;
 
 /**
- * 登录日志Controller
+ * 前台登录日志Controller
  * @Author: Squalo
  * @Date: 2018/2/17 - 16:07     day03_10
  */
@@ -24,7 +24,7 @@ public class IplogController {
     @Autowired
     private IIplogService iplogService;
 
-    /**个人用户登录记录列表*/
+    /**非异步个人用户登录记录列表*/
     @RequireLogin
     @RequestMapping("ipLog")
     public ModelAndView ipLogList(@ModelAttribute("qo") IplogQueryObject iplogQO, Map<String,Object> map){

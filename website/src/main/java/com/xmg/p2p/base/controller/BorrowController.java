@@ -3,12 +3,17 @@ package com.xmg.p2p.base.controller;
 import com.xmg.p2p.base.domain.Account;
 import com.xmg.p2p.base.domain.Logininfo;
 import com.xmg.p2p.base.domain.Userinfo;
+import com.xmg.p2p.base.query.UserFileQueryObject;
 import com.xmg.p2p.base.service.IAccountService;
+import com.xmg.p2p.base.service.IRealAuthService;
+import com.xmg.p2p.base.service.IUserFileService;
 import com.xmg.p2p.base.service.IUserinfoService;
 import com.xmg.p2p.base.util.BidConst;
 import com.xmg.p2p.base.util.UserContext;
 import com.xmg.p2p.business.domain.BidRequest;
 import com.xmg.p2p.business.service.IBidRequestService;
+import com.xmg.p2p.config.MyConfig;
+import com.xmg.p2p.exception.BidException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -34,6 +39,12 @@ public class BorrowController {
     @Autowired
     private IBidRequestService bidRequestService;
 
+    @Autowired
+    private IRealAuthService realAuthService;
+
+    @Autowired
+    private IUserFileService userFileService;
+
     /**顶部菜单栏'我要借款'按钮触发,跳转到借款中心*/
     @RequestMapping("borrow")
     public String borrowCenter(Model model){
@@ -48,9 +59,9 @@ public class BorrowController {
         }
     }
 
-    /**点击申请借款后跳转到 信息填写页面 or 拒绝申请提示信息页面*/
-    @RequestMapping("borrowInfo")
-    public String borrowInfo(Model model){
+    /**点击申请借款后跳转到 (成功)信息填写页面 or (拒绝)申请提示信息页面*/
+    @RequestMapping("borrow_preapply")
+    public String borrowPreapply(Model model){
         try {
             Logininfo current = UserContext.getCurrent();
             if(current==null){
@@ -81,7 +92,40 @@ public class BorrowController {
             model.addAttribute("msg","申请失败! "+e.getMessage());
         }
         return "borrow_apply_result";
+    }
 
+    /**前端借款标的明细*/
+    @RequestMapping("borrow_info")
+    public String borrowInfo(Long id, Model model){
+        BidRequest bidRequest = bidRequestService.get(id);
+        if(bidRequest==null){
+            throw new BidException("该借款标的不存在!", "/invest.do");
+        }
+        int state = bidRequest.getBidRequestState();
+        if(state!=BidConst.BIDREQUEST_STATE_BIDDING
+                && state!=BidConst.BIDREQUEST_STATE_PAYING_BACK && state!=BidConst.BIDREQUEST_STATE_COMPLETE_PAY_BACK){
+            throw new BidException("该借款标的不允许查看!","/invest.do");
+        }
+        Userinfo applier = userinfoService.get(bidRequest.getCreateUser().getId());
+        UserFileQueryObject userFileQueryObject = new UserFileQueryObject(applier.getId(),-1);
+
+        //封装视图数据
+        model.addAttribute("bidRequest",bidRequest );
+        model.addAttribute("userinfo",applier );
+        model.addAttribute("realAuth",realAuthService.get(applier.getRealAuthId()) );
+        model.addAttribute("userFiles",userFileService.queryForList(userFileQueryObject) );
+        //需要登录方可获取的内容
+        Logininfo current = UserContext.getCurrent();
+        boolean self = false;  //布尔值,当前用户是否为发标人
+        if(current !=null){     //已登录状态
+            if(current.getId().equals(applier.getId())){    //当前用户是筹标用户自己
+                self = true;
+            }else{                                          //当前用户不是筹标用户
+                model.addAttribute("account",accountService.getCurrent());
+            }
+        }
+        model.addAttribute("self",self);  //布尔值,当前用户是否为发标人
+        return "borrow_info";
     }
 
 }

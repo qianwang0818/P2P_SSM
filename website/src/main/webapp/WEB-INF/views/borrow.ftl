@@ -59,7 +59,7 @@
 						</li>
 					</ul>
 					<#if userinfo.isBasicInfo() && userinfo.isRealAuth() && (userinfo.score >= baseAuthScore) && userinfo.isVideoAuth()>
-						<a href="/borrowInfo.do" class="el-borrow-apply">申请贷款</a>
+						<a href="borrow_preapply.do" class="el-borrow-apply">申请贷款</a>
 					<#else>
 						<a href="javascript:$.messager.alert('提示','请先达成所有申请条件!')" class="el-borrow-apply">申请贷款</a>
 					</#if>
