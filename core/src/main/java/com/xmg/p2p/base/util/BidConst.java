@@ -65,6 +65,10 @@ public class BidConst {
     public static final BigDecimal MIN_CURRENT_RATE = new BigDecimal("5.0000");  //系统规定最小借款利率
     public static final BigDecimal MAX_CURRENT_RATE = new BigDecimal("20.0000");  //系统规定最大借款利率
 
+    //首页相关常量
+    public final static int BIDREQUEST_INDEX_SIZE = 5;                                  //首页显示借款对象数目
+    public final static String BIDREQUEST_INDEX_ORDERBY = "bidRequestState";          //首页显示借款对象排序依据列
+    public final static String BIDREQUEST_INDEX_ORDERTYPE = "ASC";                     //首页显示借款对象排序方式
 
 
 

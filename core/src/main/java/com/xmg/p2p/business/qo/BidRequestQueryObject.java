@@ -10,5 +10,15 @@ import lombok.Data;
  */
 @Data
 public class BidRequestQueryObject extends QueryObject {
+
     private int bidRequestState = -1;       //借款状态,默认全部
+
+    private int[] bidRequestStates;         //要查询的多个借款状态
+
+    /**day08_06*/
+    private String orderBy;                  //排序参照列
+
+    /**day08_06*/
+    private String orderType;                //排序方式
+
 }

@@ -91,6 +91,12 @@
       <if test="bidRequestState>-1">
         and b.bidRequestState = #{bidRequestState}
       </if>
+      <if test="bidRequestStates!=null and bidRequestStates.length>0">
+        and b.bidRequestState in
+        <foreach collection="bidRequestStates" open="(" item="state" close=")" separator=",">
+          #{state}
+        </foreach>
+      </if>
     </where>
   </sql>
 
@@ -105,6 +111,9 @@
     from `bidrequest` as b
     join logininfo as l on b.createUser_id = l.id
     <include refid="base_where"/>
+    <if test="orderBy!=null">
+      order by ${orderBy} ${orderType}
+    </if>
     limit #{start},#{pageSize}
   </select>
 

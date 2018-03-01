@@ -34,4 +34,5 @@ public interface IBidRequestService {
     /**根据一个标的查询其对应的审核历史*/
     List<BidRequestAuditHistory> selectAuditHistoryByBidRequestId(Long bidRequestId);
 
+    List<BidRequest> listIndex();
 }
