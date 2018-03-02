@@ -40,5 +40,10 @@ public class PlatformBankInfoServiceImpl implements IPlatformBankInfoService {
         }
     }
 
+    @Override
+    public List<PlatformBankInfo> selectAll() {
+        return platformBankInfoMapper.selectAll();
+    }
+
 
 }

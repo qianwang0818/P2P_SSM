@@ -1,7 +1,7 @@
 <div class="navbar navbar-default el-navbar">
 	<div class="container">
 		<div class="navbar-header">
-			<a href="/">
+			<a href="/index.do">
 				<img alt="Brand" src="/images/logo.png">
 			</a>
 		</div>

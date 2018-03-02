@@ -27,7 +27,7 @@ public class BidExceptionHandler {
     public String handlerBidException(BidException e, Model model){
         String msg = e.getMessage();
         String url = e.getUrl();
-        log.error("异常信息:{},跳转url:{}",msg,url);
+        log.error("发送异常! 异常信息:{},跳转url:{}",msg,url);
         model.addAttribute("msg",msg);
         model.addAttribute("url",url);
         return "common_result";

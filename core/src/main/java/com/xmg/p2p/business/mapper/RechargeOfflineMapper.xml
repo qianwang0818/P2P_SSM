@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.xmg.p2p.business.mapper.RechargeOfflineMapper" >
+  <resultMap id="BaseResultMap" type="com.xmg.p2p.business.domain.RechargeOffline" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="state" property="state" jdbcType="TINYINT" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="auditTime" property="auditTime" jdbcType="TIMESTAMP" />
+    <result column="applyTime" property="applyTime" jdbcType="TIMESTAMP" />
+    <result column="tradeCode" property="tradeCode" jdbcType="VARCHAR" />
+    <result column="tradeTime" property="tradeTime" jdbcType="TIMESTAMP" />
+    <result column="amount" property="amount" jdbcType="DECIMAL" />
+    <result column="note" property="note" jdbcType="VARCHAR" />
+
+    <association property="applier" columnPrefix="ap_" resultMap="com.xmg.p2p.base.mapper.LogininfoMapper.SimpleResultMap"/>
+    <association property="auditor" columnPrefix="au_" resultMap="com.xmg.p2p.base.mapper.LogininfoMapper.SimpleResultMap"/>
+    <association property="bankInfo" columnPrefix="bi_" resultMap="com.xmg.p2p.business.mapper.PlatformBankInfoMapper.BaseResultMap"/>
+  </resultMap>
+
+  <insert id="insert" parameterType="com.xmg.p2p.business.domain.RechargeOffline" useGeneratedKeys="true" keyProperty="id" >
+    insert into `rechargeoffline` (state, remark, auditTime, 
+      applyTime, auditor_id, applier_id, 
+      tradeCode, tradeTime, amount, 
+      note, bankInfo_id)
+    values (#{state,jdbcType=TINYINT}, #{remark,jdbcType=VARCHAR}, #{auditTime,jdbcType=TIMESTAMP}, 
+      #{applyTime,jdbcType=TIMESTAMP}, #{auditor.id,jdbcType=BIGINT}, #{applier.id,jdbcType=BIGINT}, 
+      #{tradeCode,jdbcType=VARCHAR}, #{tradeTime,jdbcType=TIMESTAMP}, #{amount,jdbcType=DECIMAL}, 
+      #{note,jdbcType=VARCHAR}, #{bankInfo.id,jdbcType=BIGINT})
+  </insert>
+
+  <update id="updateByPrimaryKey" parameterType="com.xmg.p2p.business.domain.RechargeOffline" >
+    update `rechargeoffline`
+    set state = #{state,jdbcType=TINYINT},
+      remark = #{remark,jdbcType=VARCHAR},
+      auditTime = #{auditTime,jdbcType=TIMESTAMP},
+      applyTime = #{applyTime,jdbcType=TIMESTAMP},
+      auditor_id = #{auditor.id,jdbcType=BIGINT},
+      applier_id = #{applier.id,jdbcType=BIGINT},
+      tradeCode = #{tradeCode,jdbcType=VARCHAR},
+      tradeTime = #{tradeTime,jdbcType=TIMESTAMP},
+      amount = #{amount,jdbcType=DECIMAL},
+      note = #{note,jdbcType=VARCHAR},
+      bankInfo_id = #{bankInfo.id,jdbcType=BIGINT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <sql id="base_column">
+    r.id, r.state, r.remark, r.auditTime, r.applyTime, r.tradeCode, r.tradeTime, r.amount, r.note,
+      ap.id as ap_id, ap.username as ap_username,
+      au.id as au_id, au.username as au_username,
+      bi.id as bi_id, bi.bankName as bi_bankName, bi.accountName as bi_accountName,
+        bi.accountNumber as bi_accountNumber, bi.bankForkName as bi_bankForkName
+  </sql>
+
+  <sql id="base_table">
+    `rechargeoffline` as r
+    join logininfo as ap on r.applier_id = ap.id
+    left join logininfo as au on r.auditor_id = au.id
+    join platformbankinfo as bi on r.bankInfo_id = bi.id
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select <include refid="base_column"/>
+    from <include refid="base_table"/>
+    where r.id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select <include refid="base_column"/>
+    from <include refid="base_table"/>
+  </select>
+
+  <sql id="base_where">
+    <where>
+      <if test="state>-1">
+        and r.state = #{state}
+      </if>
+      <if test="applierId!=null">
+        and r.applier_id = #{applierId}
+      </if>
+      <if test="beginDate!=null">
+        <![CDATA[
+           and r.tradeTime >= #{beginDate}
+        ]]>
+      </if>
+      <if test="endDate!=null">
+        <![CDATA[
+           and r.tradeTime <= #{endDate}
+        ]]>
+      </if>
+    </where>
+  </sql>
+
+  <select id="queryForCount" resultType="int" parameterType="rechargeOfflineQueryObject">
+    select count(r.id)
+    from <include refid="base_table"/>
+    <include refid="base_where"/>
+  </select>
+
+  <select id="query" resultMap="BaseResultMap" parameterType="rechargeOfflineQueryObject">
+    select <include refid="base_column"/>
+    from <include refid="base_table"/>
+    <include refid="base_where"/>
+    limit #{start},#{pageSize}
+  </select>
+
+</mapper>
