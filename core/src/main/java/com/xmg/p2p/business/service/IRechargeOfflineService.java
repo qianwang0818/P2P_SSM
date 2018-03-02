@@ -13,6 +13,9 @@ public interface IRechargeOfflineService {
     /**提交线下充值单申请*/
     void apply(RechargeOffline rechargeOffline);
 
-    /**分页条件查询借款对象*/
+    /**分页条件查询线下充值单*/
     PageResult query(RechargeOfflineQueryObject qo);
+
+    /**审核线下充值单*/
+    void audit(RechargeOffline form) throws RuntimeException;
 }

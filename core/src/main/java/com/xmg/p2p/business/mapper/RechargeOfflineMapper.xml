@@ -79,6 +79,12 @@
       <if test="applierId!=null">
         and r.applier_id = #{applierId}
       </if>
+      <if test="bankInfoId!=null">
+        and r.bankInfo_id = #{bankInfoId}
+      </if>
+      <if test="tradeCode!=null">
+        and r.tradeCode = #{tradeCode}
+      </if>
       <if test="beginDate!=null">
         <![CDATA[
            and r.tradeTime >= #{beginDate}

@@ -27,4 +27,9 @@ public class Account extends BaseDomain {
     public BigDecimal getTotalAmount(){
         return usableAmount.add(freezedAmount).add(unReceivePrincipal);
     }
+
+    public BigDecimal addUsableAmount(BigDecimal increase){
+        this.usableAmount = this.usableAmount.add(increase);
+        return this.usableAmount;
+    }
 }
