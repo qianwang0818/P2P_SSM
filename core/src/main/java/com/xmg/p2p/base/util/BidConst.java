@@ -92,7 +92,7 @@ public class BidConst {
     public final static int SYSTEM_ACCOUNT_ACTIONTYPE_INTREST_MANAGE_CHARGE = 2;    // 系统账户收到利息管理费
     public final static int SYSTEM_ACCOUNT_ACTIONTYPE_WITHDRAW_MANAGE_CHARGE = 3;   // 系统账户收到提现手续费
 
-    /** =========还款状态=============== */
+    //还款状态      day10_04
     public final static int PAYMENT_STATE_NORMAL = 0; // 正常待还
     public final static int PAYMENT_STATE_DONE = 1; // 已还
     public final static int PAYMENT_STATE_OVERDUE = 2; // 逾期

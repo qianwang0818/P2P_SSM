@@ -341,10 +341,10 @@ public class BidRequestServiceImpl implements IBidRequestService {
         if(state==BidRequestAuditHistory.STATE_AUDIT){    //如果审核通过
             BigDecimal amout = br.getBidRequestAmount();
 
-            //1.对借款标的  修改借款状态为还款中
+            //1.对借款标的: 修改借款状态为还款中
             br.setBidRequestState(BidConst.BIDREQUEST_STATE_PAYING_BACK);
 
-            //2.对借款人  账户余额增加 生成收款流水 增加待还本息 减少可用信用 移除借款人有标在借状态 支付借款手续费
+            //2.对借款人: 账户余额增加 生成收款流水 增加待还本息 减少可用信用 移除借款人有标在借状态 支付借款手续费
             Account applierAccount = accountService.get(applierId);
             applierAccount.addUsableAmount(amout);
             accountFlowService.borrowSuccessFlow(br, applierAccount);
@@ -355,10 +355,10 @@ public class BidRequestServiceImpl implements IBidRequestService {
             applierAccount.subtractUsableAmount(managementChargeFee);      //支付借款手续费
             accountFlowService.borrowChargeFeeFlow(managementChargeFee,br,applierAccount);
 
-            //3.对平台  平台收取借款手续费 平台账户流水
+            //3.对平台: 平台收取借款手续费 平台账户流水
             systemAccountService.chargeBorrowFee(br, managementChargeFee);
 
-            //4.对投资人  遍历投标 减少冻结金 生成成功投标流水 计算待收利息待收本金
+            //4.对投资人: 遍历投标 减少冻结金 生成成功投标流水 计算待收利息待收本金
             // 汇总利息,用于最后一个投标的用户的利息计算
             BigDecimal totalBidInterest = BidConst.ZERO;        //定义初始化的利息为零
             //遍历该标的下每一笔投资
@@ -393,8 +393,8 @@ public class BidRequestServiceImpl implements IBidRequestService {
                 bidAccount.addUnReceiveInterest(bidInterest);   //增加待收利息
             }
 
-            //5.满标二审之后的流程(还款)对满标二审的影响  生成还款对象和回款对象
-            // **4生成还款对象和回款对象
+            //5.对还款/回款计划:  生成还款对象和回款对象. 满标二审之后的流程(还款)对满标二审的影响.
+            //还款对象:借款人的还款计划;回款对象:投资人的回款计划. 能和BidRequest与Bid对应.是一对多关系.
             //createPaymentSchedules(br);
 
             for (Account bidAccount : updateMap.values()){      //更新投资人account
