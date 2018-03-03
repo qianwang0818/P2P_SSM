@@ -111,4 +111,27 @@ public class BidRequestController {
         return jsonResult;
     }
 
+    /**进入满标二审列表页面*/
+    @RequestMapping("bidrequest_audit2_list")
+    public String bidrequestFullAudit2List(@ModelAttribute("qo") BidRequestQueryObject qo, Model model) {
+        qo.setBidRequestState(BidConst.BIDREQUEST_STATE_APPROVE_PENDING_2);
+        model.addAttribute("pageResult", bidRequestService.query(qo));
+        return "bidrequest/audit2";
+    }
+
+    /**满标二审审核*/
+    @RequestMapping("bidrequest_audit2")
+    @ResponseBody
+    public JSONResult bidrequestAudit2(BidRequestAuditHistory form) {
+        JSONResult jsonResult = new JSONResult("审核成功!");
+        try {
+            bidRequestService.fullAudit2(form);   //传入参数 Id remark state
+        } catch (RuntimeException e) {
+            log.error("【BidRequestController:bidrequestAudit2】发送异常:{}",e.getMessage());
+            jsonResult.setSuccess(false);
+            jsonResult.setMsg(e.getMessage());
+        }
+        return jsonResult;
+    }
+
 }

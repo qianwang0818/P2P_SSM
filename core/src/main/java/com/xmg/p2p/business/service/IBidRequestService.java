@@ -43,4 +43,6 @@ public interface IBidRequestService {
 
     /**满标一审审核*/
     void fullAudit1(BidRequestAuditHistory form);
+
+    void fullAudit2(BidRequestAuditHistory form);
 }

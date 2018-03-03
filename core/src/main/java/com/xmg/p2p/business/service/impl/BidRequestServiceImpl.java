@@ -18,6 +18,7 @@ import com.xmg.p2p.business.mapper.BidRequestMapper;
 import com.xmg.p2p.business.query.BidRequestQueryObject;
 import com.xmg.p2p.business.service.IAccountFlowService;
 import com.xmg.p2p.business.service.IBidRequestService;
+import com.xmg.p2p.business.service.ISystemAccountService;
 import com.xmg.p2p.business.util.CalculatetUtil;
 import com.xmg.p2p.business.util.DecimalFormatUtil;
 import com.xmg.p2p.exception.BidException;
@@ -56,6 +57,9 @@ public class BidRequestServiceImpl implements IBidRequestService {
 
     @Autowired
     private IAccountFlowService accountFlowService;
+
+    @Autowired
+    private ISystemAccountService systemAccountService;
 
 
     @Override
@@ -277,6 +281,7 @@ public class BidRequestServiceImpl implements IBidRequestService {
         this.update(br);
     }
 
+    /**满标一审审核*/
     @Override
     public void fullAudit1(BidRequestAuditHistory form) {
         Long bidRequestId = form.getId();
@@ -307,6 +312,58 @@ public class BidRequestServiceImpl implements IBidRequestService {
         }
 
         //更新借款对象
+        this.update(br);
+    }
+
+    /**满标二审审核*/
+    @Override
+    public void fullAudit2(BidRequestAuditHistory form) {
+        Long bidRequestId = form.getId();
+        int state = form.getState();
+        //得到借款对象,判断对象
+        BidRequest br = this.get(bidRequestId);
+        if(br==null){
+            throw new BidException("该借款标的不存在!");
+        }
+        if(br.getBidRequestState()!=BidConst.BIDREQUEST_STATE_APPROVE_PENDING_2){
+            throw new BidException("该借款标的不在满标二审中,请刷新页面!");
+        }
+
+        //创建一个借款审核记录对象
+        BidRequestAuditHistory history = new BidRequestAuditHistory(bidRequestId, br.getCreateUser(),new Date(),
+                UserContext.getCurrent(), new Date(), BidRequestAuditHistory.FULL_AUDIT_2, form.getRemark(), state);
+        bidRequestAuditHistoryMapper.insert(history);
+
+        //判断审核结果
+        Long applierId = br.getCreateUser().getId();
+        Userinfo applierUserinfo = userinfoService.get(applierId);
+        if(state==BidRequestAuditHistory.STATE_AUDIT){    //如果审核通过
+            BigDecimal amout = br.getBidRequestAmount();
+            //1.对借款标的  修改借款状态为还款中
+            br.setBidRequestState(BidConst.BIDREQUEST_STATE_PAYING_BACK);
+            //2.对借款人  账户余额增加 生成收款流水 增加待还本息 减少可用信用 移除借款人有标在借状态 支付借款手续费
+            Account applierAccount = accountService.get(applierId);
+            applierAccount.addUsableAmount(amout);
+            accountFlowService.borrowSuccessFlow(br, applierAccount);
+            applierAccount.addUnReturnAmount(amout.add(br.getTotalRewardAmount()));     //设置待还本息
+            applierAccount.subtractRemainBorrowLimit(amout);
+            applierUserinfo.removeState(BitStatesUtils.OP_HAS_BIDREQUEST_PROCESS);
+            BigDecimal managementChargeFee = CalculatetUtil.calAccountManagementCharge(br.getBidRequestAmount());
+            applierAccount.subtractUsableAmount(managementChargeFee);      //支付借款手续费
+            accountFlowService.borrowChargeFeeFlow(managementChargeFee,br,applierAccount);
+            //3.对平台  平台收取借款手续费 平台账户流水
+            systemAccountService.chargeBorrowFee(br, managementChargeFee);
+            //4.对投资人  遍历投标 减少冻结金 生成成功投标流水 计算待收利息待收本金
+
+            //5.满标二审之后的流程(还款)对满标二审的影响  生成还款对象和回款对象
+        }else if(state==BidRequestAuditHistory.STATE_REJECT){   //如果审核不通过: 1.把借款状态设置为满审拒绝 2.退款 3.将借款人有标在借状态移除
+            br.setBidRequestState(BidConst.BIDREQUEST_STATE_REJECTED);
+            this.returnBidMoney(br);
+            applierUserinfo.removeState(BitStatesUtils.OP_HAS_BIDREQUEST_PROCESS);
+        }
+
+        //更新对象
+        userinfoService.update(applierUserinfo);
         this.update(br);
     }
 

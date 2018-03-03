@@ -48,7 +48,7 @@
 			$("#myModal").modal("hide");
 			form.ajaxSubmit(function(data){
 				if(data.success){
-					$.messager.confirm("提示","审核成功!",function(){
+					$.messager.confirm("提示",data.msg,function(){
 						window.location.reload();
 					});
 				}

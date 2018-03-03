@@ -46,5 +46,24 @@ public class Account extends BaseDomain {
         return this.freezedAmount;
     }
 
+    public BigDecimal addUnReturnAmount(BigDecimal increase){
+        this.unReturnAmount = this.unReturnAmount.add(increase);
+        return this.unReturnAmount;
+    }
+    public BigDecimal subtractUnReturnAmount(BigDecimal decrease){
+        this.unReturnAmount = this.unReturnAmount.subtract(decrease);
+        return this.unReturnAmount;
+    }
+
+
+    public BigDecimal addRemainBorrowLimit(BigDecimal increase){
+        this.remainBorrowLimit = this.remainBorrowLimit.add(increase);
+        return this.remainBorrowLimit;
+    }
+    public BigDecimal subtractRemainBorrowLimit(BigDecimal decrease){
+        this.remainBorrowLimit = this.remainBorrowLimit.subtract(decrease);
+        return this.remainBorrowLimit;
+    }
+
 
 }
