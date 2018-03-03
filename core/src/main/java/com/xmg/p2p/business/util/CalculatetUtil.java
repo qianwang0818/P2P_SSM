@@ -116,16 +116,11 @@ public class CalculatetUtil {
 	/**
 	 * 计算每期还款
 	 * 
-	 * @param returnType
-	 *            还款类型
-	 * @param bidRequestAmount
-	 *            借款金额
-	 * @param yearRate
-	 *            年利率
-	 * @param monthIndex
-	 *            第几期
-	 * @param monthes2Return
-	 *            还款期限
+	 * @param returnType 还款类型
+	 * @param bidRequestAmount 借款金额
+	 * @param yearRate 年利率
+	 * @param monthIndex 第几期
+	 * @param monthes2Return 还款期限
 	 * @return
 	 */
 	public static BigDecimal calMonthToReturnMoney(int returnType, BigDecimal bidRequestAmount, BigDecimal yearRate, int monthIndex, int monthes2Return) {
@@ -189,10 +184,8 @@ public class CalculatetUtil {
 	/**
 	 * 计算利息管理费
 	 * 
-	 * @param interest
-	 *            利息
-	 * @param interestManagerChargeRate
-	 *            利息管理费比例
+	 * @param interest 利息
+	 * interestManagerChargeRate 利息管理费比例
 	 * @return
 	 */
 
@@ -205,12 +198,9 @@ public class CalculatetUtil {
 	/**
 	 * 计算借款管理费
 	 * 
-	 * @param bidRequestAmount
-	 *            借款金额
-	 * @param returnType
-	 *            还款类型
-	 * @param monthes2Return
-	 *            还款期限
+	 * @param bidRequestAmount 借款金额
+	 * returnType 还款类型
+	 * monthes2Return 还款期限
 	 * @return
 	 */
 	public static BigDecimal calAccountManagementCharge(

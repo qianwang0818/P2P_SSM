@@ -4,6 +4,7 @@ import com.xmg.p2p.base.domain.BaseDomain;
 import com.xmg.p2p.base.domain.Logininfo;
 import com.xmg.p2p.base.util.BidConst;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ import java.util.List;
  * @Date: 2018/3/3 - 16:39      day10_04
  */
 @Data
+@NoArgsConstructor
 public class PaymentSchedule extends BaseDomain {
 
     private Long bidRequestId;          // 对应借款
@@ -47,6 +49,17 @@ public class PaymentSchedule extends BaseDomain {
             default:
                 return "未知";
         }
+    }
+
+    public PaymentSchedule(Long bidRequestId, String bidRequestTitle, Logininfo borrowUser, Date deadLine, int monthIndex, int state, int bidRequestType, int returnType) {
+        this.bidRequestId = bidRequestId;
+        this.bidRequestTitle = bidRequestTitle;
+        this.borrowUser = borrowUser;
+        this.deadLine = deadLine;
+        this.monthIndex = monthIndex;
+        this.state = state;
+        this.bidRequestType = bidRequestType;
+        this.returnType = returnType;
     }
 
 }

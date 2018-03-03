@@ -9,12 +9,8 @@ import com.xmg.p2p.base.service.IUserinfoService;
 import com.xmg.p2p.base.util.BidConst;
 import com.xmg.p2p.base.util.BitStatesUtils;
 import com.xmg.p2p.base.util.UserContext;
-import com.xmg.p2p.business.domain.Bid;
-import com.xmg.p2p.business.domain.BidRequest;
-import com.xmg.p2p.business.domain.BidRequestAuditHistory;
-import com.xmg.p2p.business.mapper.BidMapper;
-import com.xmg.p2p.business.mapper.BidRequestAuditHistoryMapper;
-import com.xmg.p2p.business.mapper.BidRequestMapper;
+import com.xmg.p2p.business.domain.*;
+import com.xmg.p2p.business.mapper.*;
 import com.xmg.p2p.business.query.BidRequestQueryObject;
 import com.xmg.p2p.business.service.IAccountFlowService;
 import com.xmg.p2p.business.service.IBidRequestService;
@@ -22,6 +18,8 @@ import com.xmg.p2p.business.service.ISystemAccountService;
 import com.xmg.p2p.business.util.CalculatetUtil;
 import com.xmg.p2p.business.util.DecimalFormatUtil;
 import com.xmg.p2p.exception.BidException;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +37,7 @@ import java.util.Map;
  * @Date: 2018/2/27 - 18:39     day08_01
  */
 @Service
+@Slf4j
 public class BidRequestServiceImpl implements IBidRequestService {
 
     @Autowired
@@ -61,6 +60,12 @@ public class BidRequestServiceImpl implements IBidRequestService {
 
     @Autowired
     private ISystemAccountService systemAccountService;
+
+    @Autowired
+    private PaymentScheduleMapper paymentScheduleMapper;
+
+    @Autowired
+    private PaymentScheduleDetailMapper paymentScheduleDetailMapper;
 
 
     @Override
@@ -395,7 +400,8 @@ public class BidRequestServiceImpl implements IBidRequestService {
 
             //5.对还款/回款计划:  生成还款对象和回款对象. 满标二审之后的流程(还款)对满标二审的影响.
             //还款对象:借款人的还款计划;回款对象:投资人的回款计划. 能和BidRequest与Bid对应.是一对多关系.
-            //createPaymentSchedules(br);
+            //创建还款计划 和 每一期对应的所有回款计划
+            this.createPaymentSchedules(br);
 
             for (Account bidAccount : updateMap.values()){      //更新投资人account
                 this.accountService.update(bidAccount);
@@ -413,11 +419,11 @@ public class BidRequestServiceImpl implements IBidRequestService {
         this.update(br);
     }
 
+
     /**退回所有投资资金*/
     private void returnBidMoney(BidRequest br) {
         //定义一个Map用来缓存Account
         Map<Long, Account> updateMap = new HashMap<>();
-
         //遍历投标列表,针对每一个投标进行退款
         for (Bid bid : br.getBids()) {
             Long accountId = bid.getBidUser().getId();
@@ -433,12 +439,76 @@ public class BidRequestServiceImpl implements IBidRequestService {
             account.subtractFreezedAmount(amount);
             //生成账户流水
             accountFlowService.returnBidMoney(bid,account);
-
         }
         //更新账户
         for (Account account : updateMap.values()) {
             accountService.update(account);
         }
     }
+
+    /**创建还款计划*/
+    private void createPaymentSchedules(BidRequest br) {
+        Date nowDate = new Date();
+        BigDecimal totalInterest = BidConst.ZERO;        //定义初始化的利息总金额为零
+        BigDecimal totalPrincipal = BidConst.ZERO;        //定义初始化的本金总金额为零
+
+        //遍历每一期. 创建一个还款对象和多个回款对象
+        for (int i = 1; i <= br.getMonthes2Return() ; i++) {
+            PaymentSchedule ps = new PaymentSchedule(br.getId(),br.getTitle(),br.getCreateUser(),
+                    DateUtils.addMonths(nowDate,i),i,BidConst.PAYMENT_STATE_NORMAL,br.getBidRequestType(),br.getReturnType());
+            if(i < br.getMonthes2Return()){     //如果不是最后一期
+                ps.setTotalAmount(CalculatetUtil.calMonthToReturnMoney(br.getReturnType(), br.getBidRequestAmount(), br.getCurrentRate(), i, br.getMonthes2Return()));
+                ps.setInterest(CalculatetUtil.calMonthlyInterest(br.getReturnType(), br.getBidRequestAmount(), br.getCurrentRate(), i, br.getMonthes2Return()));
+                ps.setPrincipal(ps.getTotalAmount().subtract(ps.getInterest()));
+                totalInterest = totalInterest.add(ps.getInterest());
+                totalPrincipal = totalPrincipal.add(ps.getPrincipal());
+            }else{                              //如果是最后一期
+                ps.setInterest(br.getTotalRewardAmount().subtract(totalInterest));
+                ps.setPrincipal(br.getBidRequestAmount().subtract(totalPrincipal));
+                ps.setTotalAmount(ps.getPrincipal().add(ps.getInterest()));    //总金额=上面两行set进去的本金+利息
+            }
+            paymentScheduleMapper.insert(ps);
+
+            //为每个还款对象生成对应的所有回款对象
+            this.createPaymentSchedulesDetails(ps,br);
+        }
+    }
+
+    /**根据每一期的还款计划ps,生成该期对应的所有回款计划psd*/
+    private void createPaymentSchedulesDetails(PaymentSchedule ps, BidRequest br) {
+        List<Bid> bids = br.getBids();
+        //遍历该bidRequest借款对象的每一个投标
+        BigDecimal totalTotalAmount = BidConst.ZERO;
+        for (int i = 1; i <= bids.size() ; i++) {
+            Bid bid = bids.get(i-1);
+            //针对每个投标创建一个还款明细
+            PaymentScheduleDetail psd = new PaymentScheduleDetail(bid.getAvailableAmount(), bid.getId(), ps.getMonthIndex(),
+                    ps.getDeadLine(), br.getId(), br.getReturnType(), ps.getId(), br.getCreateUser(), bid.getBidUser().getId());
+            if(i < bids.size()){
+                BigDecimal principal = ( bid.getAvailableAmount()
+                        .divide(br.getBidRequestAmount(),BidConst.CAL_SCALE, RoundingMode.HALF_UP) )
+                        .multiply(ps.getPrincipal());
+                psd.setPrincipal(DecimalFormatUtil.formatBigDecimal(principal, BidConst.STORE_SCALE));      //设置本金
+                BigDecimal interest = ( bid.getAvailableAmount()
+                        .divide(br.getBidRequestAmount(),BidConst.CAL_SCALE, RoundingMode.HALF_UP) )
+                        .multiply(ps.getInterest());
+                psd.setInterest(DecimalFormatUtil.formatBigDecimal(interest, BidConst.STORE_SCALE));        //设置利息
+                BigDecimal totalAmount = principal.add(interest);
+                psd.setTotalAmount(DecimalFormatUtil.formatBigDecimal(totalAmount, BidConst.STORE_SCALE));  //设置本息总额
+                totalTotalAmount = totalTotalAmount.add(psd.getTotalAmount());
+            }else {
+                psd.setTotalAmount(ps.getTotalAmount().subtract(totalTotalAmount)); //得到并设置本期最后一个投标可分到的本息金额
+                //计算利息
+                BigDecimal interest = ( bid.getAvailableAmount()
+                        .divide(br.getBidRequestAmount(),BidConst.CAL_SCALE, RoundingMode.HALF_UP) )
+                        .multiply(ps.getInterest());
+                psd.setInterest(DecimalFormatUtil.formatBigDecimal(interest, BidConst.STORE_SCALE));        //设置利息
+                psd.setPrincipal(psd.getTotalAmount().subtract(psd.getInterest()));
+            }
+            paymentScheduleDetailMapper.insert(psd);
+        }
+    }
+    
+
 
 }

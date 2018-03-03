@@ -4,6 +4,7 @@ import com.xmg.p2p.base.domain.BaseDomain;
 import com.xmg.p2p.base.domain.Logininfo;
 import com.xmg.p2p.base.util.BidConst;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -15,6 +16,7 @@ import java.util.Date;
  * @Date: 2018/3/3 - 16:42
  */
 @Data
+@NoArgsConstructor
 public class PaymentScheduleDetail extends BaseDomain {
 
     private BigDecimal bidAmount;                        // 该投标人总共投标金额,便于还款/垫付查询
@@ -28,7 +30,18 @@ public class PaymentScheduleDetail extends BaseDomain {
     private Date payDate;                                // 实际付款日期
     private int returnType;                             // 还款方式
     private Long paymentScheduleId;                    // 所属还款计划
-    private Logininfo fromLogininfo;                   // 还款人(即发标人)
-    private Long toLogininfoId;                        // 收款人(即投标人)
+    private Logininfo fromLogininfo;                   // 还款金额来源(即发标人)
+    private Long toLogininfoId;                        // 收款金额去处(即投标人)
 
+    public PaymentScheduleDetail(BigDecimal bidAmount, Long bidId, int monthIndex, Date deadline, Long bidRequestId, int returnType, Long paymentScheduleId, Logininfo fromLogininfo, Long toLogininfoId) {
+        this.bidAmount = bidAmount;
+        this.bidId = bidId;
+        this.monthIndex = monthIndex;
+        this.deadline = deadline;
+        this.bidRequestId = bidRequestId;
+        this.returnType = returnType;
+        this.paymentScheduleId = paymentScheduleId;
+        this.fromLogininfo = fromLogininfo;
+        this.toLogininfoId = toLogininfoId;
+    }
 }
