@@ -32,4 +32,19 @@ public class Account extends BaseDomain {
         this.usableAmount = this.usableAmount.add(increase);
         return this.usableAmount;
     }
+    public BigDecimal subtractUsableAmount(BigDecimal decrease){
+        this.usableAmount = this.usableAmount.subtract(decrease);
+        return this.usableAmount;
+    }
+
+    public BigDecimal addFreezedAmount(BigDecimal increase){
+        this.freezedAmount = this.freezedAmount.add(increase);
+        return this.freezedAmount;
+    }
+    public BigDecimal subtractFreezedAmount(BigDecimal decrease){
+        this.freezedAmount = this.freezedAmount.subtract(decrease);
+        return this.freezedAmount;
+    }
+
+
 }

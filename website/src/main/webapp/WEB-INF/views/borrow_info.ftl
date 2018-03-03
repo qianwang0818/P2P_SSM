@@ -53,10 +53,11 @@
 						amount:amount
 					},function(data){
 						if(data.success){
-							$.messager.popup("恭喜你,投标成功");
-							location.reload();
+							$.messager.confirm("提示",data.msg,function(){
+                                location.reload();
+							});
 						}else{
-							$.messager.popup(data.message);
+							$.messager.popup(data.msg);
 						}
 					});
 				});
@@ -172,7 +173,7 @@
 						<tr>
 							<td colspan="2">
 							<div style="margin-bottom: 10px;" class="progress">
-								<div style="width: ${bidRequest.persent}" class="progress-bar progress-bar-info progress-bar-striped"></div>
+								<div style="width: ${bidRequest.persent}%" class="progress-bar progress-bar-info progress-bar-striped"></div>
 							</div>
 							</td>
 						</tr>

@@ -10,6 +10,7 @@ import com.xmg.p2p.base.util.RedisUtils;
 import com.xmg.p2p.base.util.UserContext;
 import com.xmg.p2p.base.vo.VerifyCodeVO;
 import com.xmg.p2p.base.vo.VerifyEmailVO;
+import com.xmg.p2p.exception.BidException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,7 +64,7 @@ public class VerifyServiceImpl implements IVerifyService {
             //把手机号码,验证码,发送时间 装配到VO中并保存到Session
             RedisUtils.putVerifyCode(new VerifyCodeVO(verifyCode, phoneNumber, currentTime));
         }else{      //不满足发送间隔
-            throw new RuntimeException("发送短信过于频繁,请稍后再试");     //TODO 自定义异常
+            throw new BidException("发送短信过于频繁,请稍后再试");
         }
     }
     //视频day04_07原本发送验证码方法,存Session有缺陷: 1.重启浏览器可刷新Session  2.更换绑定手机号依然要等90秒重发短信
@@ -79,7 +80,7 @@ public class VerifyServiceImpl implements IVerifyService {
             //把手机号码,验证码,发送时间 装配到VO中并保存到Session
             UserContext.putVerifyCode(new VerifyCodeVO(verifyCode, phoneNumber, currentTime));
         }else{      //不满足发送间隔
-            throw new RuntimeException("发送短信过于频繁,请稍后再试");     //TODO 自定义异常
+            throw new BidException("发送短信过于频繁,请稍后再试");
         }
     }*/
 
@@ -123,7 +124,7 @@ public class VerifyServiceImpl implements IVerifyService {
             mailService.sendMail(email, "Eloan平台邮箱认证", content.toString());
         } catch (Exception e) {
             log.error("【VerifyServiceImpl:sendVerifyEmail】认证邮件发送失败! 邮箱地址:{},错误信息:{}",email,e.getMessage());
-            throw new RuntimeException("认证邮件发送失败");       //TODO 抛出自定义异常
+            throw new BidException("认证邮件发送失败");
         }
 
         //构造一个邮箱认证VO对象,并保存到Redis

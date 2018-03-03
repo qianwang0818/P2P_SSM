@@ -102,6 +102,9 @@ public class BorrowController {
             throw new BidException("该借款标的不存在!", "/invest.do");
         }
         int state = bidRequest.getBidRequestState();
+        if(state==BidConst.BIDREQUEST_STATE_APPROVE_PENDING_1){
+            throw new BidException("该借款标的已满标,请等待审核!","/invest.do");
+        }
         if(state!=BidConst.BIDREQUEST_STATE_BIDDING
                 && state!=BidConst.BIDREQUEST_STATE_PAYING_BACK && state!=BidConst.BIDREQUEST_STATE_COMPLETE_PAY_BACK){
             throw new BidException("该借款标的不允许查看!","/invest.do");

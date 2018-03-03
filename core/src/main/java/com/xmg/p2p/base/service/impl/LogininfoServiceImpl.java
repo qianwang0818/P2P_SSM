@@ -12,6 +12,7 @@ import com.xmg.p2p.base.service.IUserinfoService;
 import com.xmg.p2p.base.util.BidConst;
 import com.xmg.p2p.base.util.MD5;
 import com.xmg.p2p.base.util.UserContext;
+import com.xmg.p2p.exception.BidException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -60,7 +61,7 @@ public class LogininfoServiceImpl implements ILogininfoService {
             userinfo.setId(logininfo.getId());
             userinfoService.add(userinfo);
         }else {             //如果已经存在,抛异常
-            throw new RuntimeException("用户名已存在!");  //TODO 抛自定义异常
+            throw new BidException("用户名已存在!");
         }
     }
 

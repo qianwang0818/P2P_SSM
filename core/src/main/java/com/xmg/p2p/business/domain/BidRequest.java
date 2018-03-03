@@ -107,4 +107,14 @@ public class BidRequest extends BaseDomain {
         return currentSum.divide(bidRequestAmount, DISPLAY_SCALE,RoundingMode.HALF_UP).multiply(new BigDecimal("100"));
     }
 
+    public int addBidCount(){
+        this.bidCount += 1;
+        return this.bidCount;
+    }
+
+    public BigDecimal addCurrentSum(BigDecimal increase){
+        this.currentSum = this.currentSum.add(increase);
+        return this.currentSum;
+    }
+
 }

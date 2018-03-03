@@ -33,4 +33,15 @@ public class BidExceptionHandler {
         return "common_result";
     }
 
+    /**拦截最大异常Exception*/
+    @ExceptionHandler(value = Exception.class)
+    public String handlerException(Exception e, Model model){
+        String msg = e.getMessage();
+        String url = "/index.do";
+        log.error("发送异常! 异常信息:{},跳转url:{}",msg,url);
+        model.addAttribute("msg","操作失败!");
+        model.addAttribute("url",url);
+        return "common_result";
+    }
+
 }

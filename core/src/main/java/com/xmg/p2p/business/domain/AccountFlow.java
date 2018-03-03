@@ -1,5 +1,6 @@
 package com.xmg.p2p.business.domain;
 
+import com.xmg.p2p.base.domain.Account;
 import com.xmg.p2p.base.domain.BaseDomain;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -33,4 +34,15 @@ public class AccountFlow extends BaseDomain {
         this.freezedAmount = freezedAmount;
         this.note = note;
     }
+
+    public AccountFlow(Account account, BigDecimal amount, int flowType, String note) {
+        this.accountId = account.getId();
+        this.amount = amount;
+        this.tradeTime = new Date();
+        this.flowType = flowType;
+        this.usableAmount = account.getUsableAmount();
+        this.freezedAmount = account.getFreezedAmount();
+        this.note = note;
+    }
+
 }

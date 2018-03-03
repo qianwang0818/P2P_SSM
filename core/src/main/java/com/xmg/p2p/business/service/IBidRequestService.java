@@ -5,6 +5,7 @@ import com.xmg.p2p.business.domain.BidRequest;
 import com.xmg.p2p.business.domain.BidRequestAuditHistory;
 import com.xmg.p2p.business.query.BidRequestQueryObject;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -34,5 +35,9 @@ public interface IBidRequestService {
     /**根据一个标的查询其对应的审核历史*/
     List<BidRequestAuditHistory> selectAuditHistoryByBidRequestId(Long bidRequestId);
 
+    /**展示首页的借款标的*/
     List<BidRequest> listIndex();
+
+    /**投资者投标申请*/
+    void bid(Long bidRequestId, BigDecimal amount) throws RuntimeException ;
 }

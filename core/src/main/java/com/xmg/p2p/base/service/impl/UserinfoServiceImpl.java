@@ -9,6 +9,7 @@ import com.xmg.p2p.base.util.BitStatesUtils;
 import com.xmg.p2p.base.util.UserContext;
 import com.xmg.p2p.base.vo.VerifyCodeVO;
 import com.xmg.p2p.base.vo.VerifyEmailVO;
+import com.xmg.p2p.exception.BidException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,7 +36,7 @@ public class UserinfoServiceImpl implements IUserinfoService {
     public void update(Userinfo userinfo) {
         int ret = userinfoMapper.updateByPrimaryKey(userinfo);
         if(ret == 0){       //乐观锁失败
-            throw new RuntimeException("【Userinfo更新操作】乐观锁失败,Userinfo:"+userinfo.getId());   //TODO 抛出自定义异常
+            throw new BidException("【Userinfo更新操作】乐观锁失败,Userinfo:"+userinfo.getId());
         }
     }
 
@@ -62,7 +63,7 @@ public class UserinfoServiceImpl implements IUserinfoService {
         //先判断用户是否已经绑定了手机,如果已经绑定了手机,抛出异常
         Userinfo userinfo = this.getCurrent();
         if(userinfo!=null && userinfo.isBindPhone()){      //如果用户已经绑定了手机
-            throw new RuntimeException("您已绑定手机,请勿重复绑定");       //TODO 抛出自定义异常
+            throw new BidException("您已绑定手机,请勿重复绑定");
         }
 
         //调用IVerifyCodeService业务,校验比对Redis.

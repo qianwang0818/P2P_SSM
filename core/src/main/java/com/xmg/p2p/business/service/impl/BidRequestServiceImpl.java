@@ -9,13 +9,18 @@ import com.xmg.p2p.base.service.IUserinfoService;
 import com.xmg.p2p.base.util.BidConst;
 import com.xmg.p2p.base.util.BitStatesUtils;
 import com.xmg.p2p.base.util.UserContext;
+import com.xmg.p2p.business.domain.Bid;
 import com.xmg.p2p.business.domain.BidRequest;
 import com.xmg.p2p.business.domain.BidRequestAuditHistory;
+import com.xmg.p2p.business.mapper.BidMapper;
 import com.xmg.p2p.business.mapper.BidRequestAuditHistoryMapper;
 import com.xmg.p2p.business.mapper.BidRequestMapper;
 import com.xmg.p2p.business.query.BidRequestQueryObject;
+import com.xmg.p2p.business.service.IAccountFlowService;
 import com.xmg.p2p.business.service.IBidRequestService;
 import com.xmg.p2p.business.util.CalculatetUtil;
+import com.xmg.p2p.business.util.DecimalFormatUtil;
+import com.xmg.p2p.exception.BidException;
 import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +48,12 @@ public class BidRequestServiceImpl implements IBidRequestService {
 
     @Autowired
     private BidRequestAuditHistoryMapper bidRequestAuditHistoryMapper;
+
+    @Autowired
+    private BidMapper bidMapper;
+
+    @Autowired
+    private IAccountFlowService accountFlowService;
 
 
     @Override
@@ -77,6 +88,7 @@ public class BidRequestServiceImpl implements IBidRequestService {
         }
     }
 
+    /**借款申请*/
     @Override
     public void apply(BidRequest form) throws RuntimeException {
         Logininfo logininfo = UserContext.getCurrent();
@@ -179,11 +191,13 @@ public class BidRequestServiceImpl implements IBidRequestService {
         this.update(bidRequest);
     }
 
+    /**根据一个标的查询其对应的审核历史*/
     @Override
     public List<BidRequestAuditHistory> selectAuditHistoryByBidRequestId(Long bidRequestId) {
         return bidRequestAuditHistoryMapper.selectByBidRequestId(bidRequestId);
     }
 
+    /**展示首页的借款标的*/
     @Override
     public List<BidRequest> listIndex() {
         BidRequestQueryObject qo = new BidRequestQueryObject();
@@ -194,6 +208,71 @@ public class BidRequestServiceImpl implements IBidRequestService {
         qo.setOrderBy(BidConst.BIDREQUEST_INDEX_ORDERBY);
         qo.setOrderType(BidConst.BIDREQUEST_INDEX_ORDERTYPE);
         return bidRequestMapper.query(qo);
+    }
+
+    /**投资者申请投标*/
+    @Override
+    public void bid(Long bidRequestId, BigDecimal amount) throws RuntimeException {
+        BidRequest br = this.get(bidRequestId);
+        Account account = accountService.getCurrent();
+        Logininfo logininfo = UserContext.getCurrent();
+        BigDecimal remainAmount = br.getRemainAmount();
+        BigDecimal minBidAmount = br.getMinBidAmount();
+        //检查判断
+        //1.借款标的存在
+        if(br==null){
+            throw new BidException("该借款标的不存在!");
+        }
+        //2.借款状态为招标中
+        if(br.getBidRequestState()!=BidConst.BIDREQUEST_STATE_BIDDING){
+            throw new BidException("该借款标的不在招标中,请刷新页面!");
+        }
+        //3.当前投标用户不是借款标的申请人
+        if(br.getCreateUser().equals(logininfo.getId())){
+            throw new BidException("您不能投资自己发布的借款标的!");
+        }
+        //4.申请投标金额≤当前用户账户余额
+        if(amount.compareTo(account.getUsableAmount())>0){
+            throw new BidException("您的账户可用余额小于本次申请投标金额!");
+        }
+        //5.申请投标金额≥借款的最小投标金额
+        if(amount.compareTo(minBidAmount)<0){
+            throw new BidException("本次投标金额小于该借款标的限制的最小投标金额!");
+        }
+        //6.申请投标金额≤借款标的剩余可投金额
+        if(amount.compareTo(remainAmount)>0){
+            throw new BidException("本次投标金额大于该借款标的剩余可投金额!");
+        }
+        //7.如果零＜投标后剩余标的＜最小投标金额,要求把余标全部投完 (现在剩余标的额-本次投标额)<最小投标额
+        if( (remainAmount.subtract(amount).compareTo(BigDecimal.ZERO) > 0) && (remainAmount.subtract(amount).compareTo(minBidAmount) < 0) ){
+            throw new BidException("投标后的余标金额请不要小于最小投标金额("+ DecimalFormatUtil.formatBigDecimal(minBidAmount,2) +")!");
+        }
+        //8.其它的判断,例如:
+        /*投标金额不允许有小数点,方便计算利息.
+        投标总人数不能超过两百人,否则认定为非法集资.
+        同一个人对同一标的可以多次投资,次数不能超过五次.总金额不能超过20%.*/
+
+        //执行投标
+        //1.创建一个投标对象,设置相关属性
+        Bid bid = new Bid(br.getCurrentRate(),amount,br.getId(),br.getTitle(), logininfo,new Date());
+        bidMapper.insert(bid);
+        //2.得到投标人账户,修改账户信息
+        account.subtractUsableAmount(amount);
+        account.addFreezedAmount(amount);
+        //3.生成一条投标流水
+        accountFlowService.bidFlow(bid,account);
+        //4.修改借款标的相关信息
+        br.addBidCount();
+        br.addCurrentSum(amount);
+
+        //判断当前标是否投满
+        if(br.getRemainAmount().compareTo(BigDecimal.ZERO)==0){       //如果投满,修改标的状态为满标一审.
+            br.setBidRequestState(BidConst.BIDREQUEST_STATE_APPROVE_PENDING_1);
+        }
+
+        //更新对象
+        this.accountService.update(account);
+        this.update(br);
     }
 
 }
