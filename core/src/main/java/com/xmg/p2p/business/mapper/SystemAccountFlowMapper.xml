@@ -14,7 +14,8 @@
   </resultMap>
   
   <insert id="insert" useGeneratedKeys="true" keyProperty="id" >
-    insert into `systemaccountflow` (createdDate, accountActionType, amount, note, usableAmount, 
+    insert into `systemaccountflow` (createdDate, accountActionType,
+      amount, note, usableAmount,
       freezedAmount, systemAccount_id)
     values (#{createdDate,jdbcType=TIMESTAMP}, #{accountActionType,jdbcType=TINYINT}, 
       #{amount,jdbcType=DECIMAL}, #{note,jdbcType=VARCHAR}, #{usableAmount,jdbcType=DECIMAL}, 

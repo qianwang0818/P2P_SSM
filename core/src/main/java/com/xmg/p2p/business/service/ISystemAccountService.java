@@ -18,7 +18,7 @@ public interface ISystemAccountService {
 	void initAccount();
 
 	/**系统账户收到借款管理费*/
-	//void chargeBorrowFee(BidRequest br, BigDecimal manageChargeFee);
+	void chargeBorrowFee(BidRequest br, BigDecimal manageChargeFee);
 
 	/**系统账户收取提现手续费*/
 	//void chargeWithdrawFee(MoneyWithdraw m);

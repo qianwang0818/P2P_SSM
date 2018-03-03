@@ -63,4 +63,11 @@ public class AccountFlowServiceImpl implements IAccountFlowService {
         AccountFlow flow = new AccountFlow(account, managementChargeFee, BidConst.ACCOUNT_ACTIONTYPE_CHARGE, "标的"+ bidRequest.getTitle()+"-借款成功,支付借款手续费:" + managementChargeFee );
         accountFlowMapper.insert(flow);
     }
+
+    /**投标成功,投资人冻结金额减少的流水*/
+    @Override
+    public void bidSuccessFlow(Bid bid, Account account) {
+        AccountFlow flow = new AccountFlow(account, bid.getAvailableAmount(), BidConst.ACCOUNT_ACTIONTYPE_BID_SUCCESSFUL, "标的"+ bid.getBidRequestTitle()+"-投资成功,本次投标金额:" + bid.getAvailableAmount());
+        accountFlowMapper.insert(flow);
+    }
 }

@@ -26,4 +26,7 @@ public interface IAccountFlowService {
 
     /**借款人缴纳借款手续费流水*/
     void borrowChargeFeeFlow(BigDecimal managementChargeFee, BidRequest br, Account applierAccount);
+
+    /**投标成功,投资人冻结金额减少的流水*/
+    void bidSuccessFlow(Bid bid, Account bidAccount);
 }

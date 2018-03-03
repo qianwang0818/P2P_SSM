@@ -55,7 +55,6 @@ public class Account extends BaseDomain {
         return this.unReturnAmount;
     }
 
-
     public BigDecimal addRemainBorrowLimit(BigDecimal increase){
         this.remainBorrowLimit = this.remainBorrowLimit.add(increase);
         return this.remainBorrowLimit;
@@ -65,5 +64,22 @@ public class Account extends BaseDomain {
         return this.remainBorrowLimit;
     }
 
+    public BigDecimal addUnReceivePrincipal(BigDecimal increase){
+        this.unReceivePrincipal = this.unReceivePrincipal.add(increase);
+        return this.unReceivePrincipal;
+    }
+    public BigDecimal subtractUnReceivePrincipal(BigDecimal decrease){
+        this.unReceivePrincipal = this.unReceivePrincipal.subtract(decrease);
+        return this.unReceivePrincipal;
+    }
+
+    public BigDecimal addUnReceiveInterest(BigDecimal increase){
+        this.unReceiveInterest = this.unReceiveInterest.add(increase);
+        return this.unReceiveInterest;
+    }
+    public BigDecimal subtractUnReceiveInterest(BigDecimal decrease){
+        this.unReceiveInterest = this.unReceiveInterest.subtract(decrease);
+        return this.unReceiveInterest;
+    }
 
 }

@@ -28,6 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -339,8 +340,10 @@ public class BidRequestServiceImpl implements IBidRequestService {
         Userinfo applierUserinfo = userinfoService.get(applierId);
         if(state==BidRequestAuditHistory.STATE_AUDIT){    //如果审核通过
             BigDecimal amout = br.getBidRequestAmount();
+
             //1.对借款标的  修改借款状态为还款中
             br.setBidRequestState(BidConst.BIDREQUEST_STATE_PAYING_BACK);
+
             //2.对借款人  账户余额增加 生成收款流水 增加待还本息 减少可用信用 移除借款人有标在借状态 支付借款手续费
             Account applierAccount = accountService.get(applierId);
             applierAccount.addUsableAmount(amout);
@@ -351,11 +354,54 @@ public class BidRequestServiceImpl implements IBidRequestService {
             BigDecimal managementChargeFee = CalculatetUtil.calAccountManagementCharge(br.getBidRequestAmount());
             applierAccount.subtractUsableAmount(managementChargeFee);      //支付借款手续费
             accountFlowService.borrowChargeFeeFlow(managementChargeFee,br,applierAccount);
+
             //3.对平台  平台收取借款手续费 平台账户流水
             systemAccountService.chargeBorrowFee(br, managementChargeFee);
+
             //4.对投资人  遍历投标 减少冻结金 生成成功投标流水 计算待收利息待收本金
+            // 汇总利息,用于最后一个投标的用户的利息计算
+            BigDecimal totalBidInterest = BidConst.ZERO;        //定义初始化的利息为零
+            //遍历该标的下每一笔投资
+            Map<Long, Account> updateMap = new HashMap<Long, Account>();
+            List<Bid> bids = br.getBids();
+            for (int i=1 ; i<=bids.size() ; i++) {
+                Bid bid = bids.get(i-1);
+                // 4.1 减少投资人的冻结金额;
+                Long bidUserId = bid.getBidUser().getId();
+                Account bidAccount = updateMap.get(bidUserId);
+                if (bidAccount == null){    //如果Map缓存中没有才去数据库找
+                    bidAccount = this.accountService.get(bidUserId);
+                    updateMap.put(bidUserId, bidAccount);
+                }
+                bidAccount.subtractFreezedAmount(bid.getAvailableAmount());     //减少冻结金额
+                // 4.2 生成成功投标流水
+                this.accountFlowService.bidSuccessFlow(bid, bidAccount);
+                // 4.3 计算待收本金和待收利息
+                bidAccount.addUnReceivePrincipal(bid.getAvailableAmount());     //增加待收本金: 待收本金=本次的投标金额
+                BigDecimal bidInterest = BidConst.ZERO;     //定义一个待收利息容器,用于一会接收计算得到的待收利息额
+                if (i < bids.size()) {  //如果当前投标不是最后一个投标,累加利息
+                    // 待收利息=(投标金额/借款总金额)*借款总回报利息
+                    bidInterest = ( bid.getAvailableAmount()
+                            .divide(br.getBidRequestAmount(),BidConst.CAL_SCALE,RoundingMode.HALF_UP) )
+                            .multiply(br.getTotalRewardAmount());
+                    bidInterest = DecimalFormatUtil.formatBigDecimal(bidInterest, BidConst.STORE_SCALE);    //计算精度8位,存储精度4位
+                    // 累计利息增加,增加每次投标的利息
+                    totalBidInterest = totalBidInterest.add(bidInterest);
+                } else {            // 如果当前投标是整个投标列表中的最后一个投标. 此投标的利息=借款总回报利息-前面累加的投标利息
+                    bidInterest = br.getTotalRewardAmount().subtract(totalBidInterest);
+                }
+                bidAccount.addUnReceiveInterest(bidInterest);   //增加待收利息
+            }
 
             //5.满标二审之后的流程(还款)对满标二审的影响  生成还款对象和回款对象
+            // **4生成还款对象和回款对象
+            //createPaymentSchedules(br);
+
+            for (Account bidAccount : updateMap.values()){      //更新投资人account
+                this.accountService.update(bidAccount);
+            }
+            this.accountService.update(applierAccount);     //更新借款人account
+
         }else if(state==BidRequestAuditHistory.STATE_REJECT){   //如果审核不通过: 1.把借款状态设置为满审拒绝 2.退款 3.将借款人有标在借状态移除
             br.setBidRequestState(BidConst.BIDREQUEST_STATE_REJECTED);
             this.returnBidMoney(br);

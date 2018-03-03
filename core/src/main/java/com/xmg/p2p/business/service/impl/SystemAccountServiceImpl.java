@@ -47,24 +47,18 @@ public class SystemAccountServiceImpl implements ISystemAccountService {
 	}
 
 	/**系统账户收到借款管理费*/
-	/*@Override
-	public void chargeBorrowFee(BidRequest br, BigDecimal manageChargeFee) {
-		// 1,得到当前系统账户;
+	@Override
+	public void chargeBorrowFee(BidRequest br, BigDecimal managementChargeFee) {
+		// 1.得到当前系统账户;
 		SystemAccount current = this.systemAccountMapper.selectCurrent();
-		// 2,修改账户余额;
-		current.setUsableAmount(current.getUsableAmount().add(manageChargeFee));
-		// 3,生成收款流水
-		SystemAccountFlow flow = new SystemAccountFlow();
-		flow.setAccountActionType(BidConst.SYSTEM_ACCOUNT_ACTIONTYPE_MANAGE_CHARGE);
-		flow.setAmount(manageChargeFee);
-		flow.setUsableAmount(current.getUsableAmount());
-		flow.setCreatedDate(new Date());
-		flow.setFreezedAmount(current.getFreezedAmount());
-		flow.setNote("借款" + br.getTitle() + "成功,收取借款手续费:" + manageChargeFee);
-		flow.setSystemAccountId(current.getId());
-		this.systemAccountFlowMapper.insert(flow);
+		// 2.修改系统账户余额;
+		current.addUsableAmount(managementChargeFee);
+		// 3.生成系统账户的收款流水
+		SystemAccountFlow flow = new SystemAccountFlow(current,managementChargeFee,BidConst.SYSTEM_ACCOUNT_ACTIONTYPE_MANAGE_CHARGE,"借款" + br.getTitle() + "成功,收取借款手续费:" + managementChargeFee);
+		this.systemAccountFlowMapper.insert(flow);	//系统账户的流水写入数据库
+		// 4.更新系统账户
 		this.update(current);
-	}*/
+	}
 
 	/*@Override
 	public void chargeWithdrawFee(MoneyWithdraw m) {
