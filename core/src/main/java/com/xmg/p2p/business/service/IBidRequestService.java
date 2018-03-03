@@ -40,4 +40,7 @@ public interface IBidRequestService {
 
     /**投资者投标申请*/
     void bid(Long bidRequestId, BigDecimal amount) throws RuntimeException ;
+
+    /**满标一审审核*/
+    void fullAudit1(BidRequestAuditHistory form);
 }

@@ -15,4 +15,6 @@ public interface IAccountFlowService {
     /**投标流水*/
     void bidFlow(Bid bid, Account account);
 
+    /**满标审核拒绝,退款流水*/
+    void returnBidMoney(Bid bid, Account account);
 }

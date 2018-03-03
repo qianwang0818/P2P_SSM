@@ -58,7 +58,7 @@ public class BidRequestController {
     public JSONResult bidrequestPublishAudit(BidRequestAuditHistory form) {
         JSONResult jsonResult = new JSONResult("审核成功!");
         try {
-            bidRequestService.publishAudit(form);
+            bidRequestService.publishAudit(form);   //传入参数 Id remark state
         } catch (RuntimeException e) {
             log.error("【BidRequestController:bidrequestPublishAudit】发送异常:{}",e.getMessage());
             jsonResult.setSuccess(false);
@@ -87,4 +87,28 @@ public class BidRequestController {
         model.addAttribute("websiteHost", MyConfig.websiteHost);
         return "bidrequest/borrow_info";
     }
+
+    /**进入满标一审列表页面*/
+    @RequestMapping("bidrequest_audit1_list")
+    public String bidrequestFullAudit1List(@ModelAttribute("qo") BidRequestQueryObject qo, Model model) {
+        qo.setBidRequestState(BidConst.BIDREQUEST_STATE_APPROVE_PENDING_1);
+        model.addAttribute("pageResult", bidRequestService.query(qo));
+        return "bidrequest/audit1";
+    }
+
+    /**满标一审审核*/
+    @RequestMapping("bidrequest_audit1")
+    @ResponseBody
+    public JSONResult bidrequestAudit1(BidRequestAuditHistory form) {
+        JSONResult jsonResult = new JSONResult("审核成功!");
+        try {
+            bidRequestService.fullAudit1(form);   //传入参数 Id remark state
+        } catch (RuntimeException e) {
+            log.error("【BidRequestController:bidrequestAudit1】发送异常:{}",e.getMessage());
+            jsonResult.setSuccess(false);
+            jsonResult.setMsg(e.getMessage());
+        }
+        return jsonResult;
+    }
+
 }

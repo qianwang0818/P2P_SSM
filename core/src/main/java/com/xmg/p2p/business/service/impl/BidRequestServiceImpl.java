@@ -28,7 +28,9 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**借款对象相关服务接口
  * @Author: Squalo
@@ -273,6 +275,67 @@ public class BidRequestServiceImpl implements IBidRequestService {
         //更新对象
         this.accountService.update(account);
         this.update(br);
+    }
+
+    @Override
+    public void fullAudit1(BidRequestAuditHistory form) {
+        Long bidRequestId = form.getId();
+        int state = form.getState();
+        //得到借款对象,判断对象
+        BidRequest br = this.get(bidRequestId);
+        if(br==null){
+            throw new BidException("该借款标的不存在!");
+        }
+        if(br.getBidRequestState()!=BidConst.BIDREQUEST_STATE_APPROVE_PENDING_1){
+            throw new BidException("该借款标的不在满标一审中,请刷新页面!");
+        }
+
+        //创建一个借款审核记录对象
+        BidRequestAuditHistory history = new BidRequestAuditHistory(bidRequestId, br.getCreateUser(),new Date(),
+                UserContext.getCurrent(), new Date(), BidRequestAuditHistory.FULL_AUDIT_1, form.getRemark(), state);
+        bidRequestAuditHistoryMapper.insert(history);
+
+        //判断审核结果
+        if(state==BidRequestAuditHistory.FULL_AUDIT_1){    //如果审核通过 把借款状态设置为满标二审
+            br.setBidRequestState(BidConst.BIDREQUEST_STATE_APPROVE_PENDING_2);
+        }else if(state==BidRequestAuditHistory.STATE_REJECT){   //如果审核不通过: 1.把借款状态设置为满审拒绝 2.退款 3.将借款人有标在借状态移除
+            br.setBidRequestState(BidConst.BIDREQUEST_STATE_REJECTED);
+            this.returnBidMoney(br);
+            Userinfo applierUserinfo = userinfoService.get(br.getCreateUser().getId());
+            applierUserinfo.removeState(BitStatesUtils.OP_HAS_BIDREQUEST_PROCESS);
+            userinfoService.update(applierUserinfo);
+        }
+
+        //更新借款对象
+        this.update(br);
+    }
+
+    /**退回所有投资资金*/
+    private void returnBidMoney(BidRequest br) {
+        //定义一个Map用来缓存Account
+        Map<Long, Account> updateMap = new HashMap<>();
+
+        //遍历投标列表,针对每一个投标进行退款
+        for (Bid bid : br.getBids()) {
+            Long accountId = bid.getBidUser().getId();
+            //找到投标人对应的account
+            Account account = updateMap.get(accountId);
+            if(account == null){    //如果是第一次遍历到这个用户,就去数据库查找,并放入缓存Map中
+                account = accountService.get(accountId);
+                updateMap.put(accountId,account);
+            }
+            BigDecimal amount = bid.getAvailableAmount();
+            //账户可用余额增加,冻结金额减少
+            account.addUsableAmount(amount);
+            account.subtractFreezedAmount(amount);
+            //生成账户流水
+            accountFlowService.returnBidMoney(bid,account);
+
+        }
+        //更新账户
+        for (Account account : updateMap.values()) {
+            accountService.update(account);
+        }
     }
 
 }

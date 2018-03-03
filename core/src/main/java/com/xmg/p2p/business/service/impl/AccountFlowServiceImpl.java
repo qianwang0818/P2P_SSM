@@ -38,4 +38,10 @@ public class AccountFlowServiceImpl implements IAccountFlowService {
         AccountFlow flow = new AccountFlow(account, bid.getAvailableAmount(), BidConst.BIDREQUEST_STATE_BIDDING, "投标成功,冻结账户可用余额:" + bid.getAvailableAmount());
         accountFlowMapper.insert(flow);
     }
+
+    @Override
+    public void returnBidMoney(Bid bid, Account account) {
+        AccountFlow flow = new AccountFlow(account, bid.getAvailableAmount(), BidConst.ACCOUNT_ACTIONTYPE_BID_UNFREEZED, "满审拒绝退款:" + bid.getAvailableAmount());
+        accountFlowMapper.insert(flow);
+    }
 }
