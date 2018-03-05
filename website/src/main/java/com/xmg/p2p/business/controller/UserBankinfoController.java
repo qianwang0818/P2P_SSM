@@ -5,6 +5,7 @@ import com.xmg.p2p.base.domain.Userinfo;
 import com.xmg.p2p.base.service.IUserinfoService;
 import com.xmg.p2p.business.domain.UserBankInfo;
 import com.xmg.p2p.business.service.IUserBankService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * @Date: 2018/3/5 - 20:59      day11_01
  */
 @Controller
+@Slf4j
 public class UserBankinfoController {
 
     @Autowired
@@ -40,10 +42,14 @@ public class UserBankinfoController {
         }
     }
 
-    /**保存银行卡*/
+    /**绑定银行卡*/
     @RequestMapping("/bankInfo_save")
-    public String bankinfoSave(UserBankInfo form){
-
-        return null;
+    public String bankinfoSave(UserBankInfo userBankInfo){
+        try {
+            userBankService.bind(userBankInfo);
+        } catch (RuntimeException e) {
+            log.error(e.getMessage());
+        }
+        return "redirect:bankInfo.do";
     }
 }
