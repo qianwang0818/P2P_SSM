@@ -18,7 +18,7 @@ public class PlatformBankInfo extends BaseDomain {
     private String accountName;         //开户人姓名
     private String accountNumber;       //银行账号
     private String bankForkName;        //开户支行
-    private String iconcls;        //开户支行
+    private String iconcls;
 
     public String getJsonString(){
         Map<String, Object> map = new HashMap<String, Object>();

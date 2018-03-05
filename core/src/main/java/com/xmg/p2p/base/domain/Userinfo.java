@@ -55,6 +55,10 @@ public class Userinfo extends BaseDomain {
         return BitStatesUtils.hasState(bitState,BitStatesUtils.OP_VEDIO_AUTH);
     }
 
+    public boolean isBindBank() {
+        return BitStatesUtils.hasState(bitState,BitStatesUtils.OP_BIND_BANKINFO);
+    }
+
     public void addScore(int add){
         this.score += add;
     }

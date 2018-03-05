@@ -8,7 +8,7 @@ import java.util.List;
  */
 public interface AccountFlowMapper {
 
-    int insert(AccountFlow record);
+    int insert(AccountFlow accountFlow);
 
     List<AccountFlow> selectAll();
 
