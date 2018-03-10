@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
 
     <!--Spring配置-->
-     <!--&lt;!&ndash; 配置web.xml，使其具有springmvc特性，主要配置两处，一个是ContextLoaderListener，一个是DispatcherServlet &ndash;&gt;
+     <!--&lt;!&ndash; 配置web.xml,使其具有springmvc特性，主要配置两处，一个是ContextLoaderListener，一个是DispatcherServlet &ndash;&gt;
       <context-param>
         <param-name>contextConfigLocation</param-name>
         <param-value>classpath:applicationContext_website.xml</param-value>
